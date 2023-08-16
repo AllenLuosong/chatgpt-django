@@ -1,0 +1,26 @@
+2023-08-13 21:06:50.589 | WARNING  | chatgpt_user.views:create:219 - string注册流程未完成
+2023-08-13 21:16:26.319 | INFO     | chatgpt_user.views:create:228 - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY5MjAxODk4NiwiaWF0IjoxNjkxOTMyNTg2LCJqdGkiOiIzMzY1ZmZiNGRhYzg0YjJiYjQ2MmFkZWZhOTE0NjIyMyIsInVzZXJfaWQiOjI2LCJ1c2VybmFtZSI6IjE3NTU4Mzg5MDRAcXEuY29tIn0.O6I_hu31D6x9x5WKsHkrazYTGKhIjCUBdl078UgjYEo
+2023-08-13 21:16:26.324 | WARNING  | chatgpt_user.views:create:235 - 1755838904@qq.com登录成功
+2023-08-13 21:31:28.889 | INFO     | chatgpt_user.serializers:get_token:59 - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY5MjAxOTg4OCwiaWF0IjoxNjkxOTMzNDg4LCJqdGkiOiJmZGQ5NmRmNWQ5NTI0ZjBmODkxMTQzODJjM2RlNTdjOCIsInVzZXJfaWQiOjI2LCJ1c2VybmFtZSI6IjE3NTU4Mzg5MDRAcXEuY29tIn0.y19DWZxiBuuti5gjYA008tKv7mQCStgns_5qpGSiaKI
+2023-08-13 21:31:28.893 | INFO     | chatgpt_user.views:create:228 - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY5MjAxOTg4OCwiaWF0IjoxNjkxOTMzNDg4LCJqdGkiOiJmZGQ5NmRmNWQ5NTI0ZjBmODkxMTQzODJjM2RlNTdjOCIsInVzZXJfaWQiOjI2LCJ1c2VybmFtZSI6IjE3NTU4Mzg5MDRAcXEuY29tIn0.y19DWZxiBuuti5gjYA008tKv7mQCStgns_5qpGSiaKI
+2023-08-13 21:31:28.894 | WARNING  | chatgpt_user.views:create:235 - 1755838904@qq.com登录成功
+2023-08-13 21:34:18.961 | SUCCESS  | chatgpt_user.views:create:234 - 1755838904@qq.com登录成功
+2023-08-13 21:36:38.218 | SUCCESS  | chatgpt_user.views:create:233 - 1755838904@qq.com登录成功
+2023-08-13 21:41:06.908 | SUCCESS  | chatgpt_user.views:create:233 - 1755838904@qq.com登录成功
+2023-08-13 21:42:31.191 | SUCCESS  | chatgpt_user.views:create:233 - 1755838904@qq.com登录成功
+2023-08-13 21:52:06.450 | SUCCESS  | chatgpt_user.views:create:233 - 1755838904@qq.com登录成功
+2023-08-13 21:54:19.624 | SUCCESS  | chatgpt_user.views:create:233 - 1755838904@qq.com登录成功
+2023-08-13 21:56:59.413 | SUCCESS  | chatgpt_user.views:create:233 - 1755838904@qq.com登录成功
+2023-08-13 21:57:51.497 | SUCCESS  | chatgpt_user.views:create:233 - 1755838904@qq.com登录成功
+2023-08-13 21:57:52.801 | INFO     | chatgpt_user.views:list:243 - {'token_type': 'access', 'exp': 1691938671, 'iat': 1691935071, 'jti': 'f84565407f3c46bf9f3c1039774ddd23', 'user_id': 26}
+2023-08-13 22:01:23.623 | WARNING  | chatgpt_user.views:create:224 - 1755838904@qq.com账号/密码不匹配
+2023-08-13 22:01:30.043 | SUCCESS  | chatgpt_user.views:create:233 - 1755838904@qq.com登录成功
+2023-08-13 22:01:31.440 | INFO     | chatgpt_user.views:list:242 - {'token_type': 'access', 'exp': 1691938890, 'iat': 1691935290, 'jti': '4fb4d4ccd2ce4eb9b2e5fe56e270ba37', 'user_id': 26, 'username': '1755838904@qq.com'}
+2023-08-13 22:10:55.733 | INFO     | chatgpt_user.views:send_verification_email:61 - 邮件发送成功,接收人:test@163.com, 请求人IP:127.0.0.1
+2023-08-13 22:18:24.122 | INFO     | chatgpt_user.views:send_verification_email:61 - 邮件发送成功,接收人:test2@163.com, 请求人IP:127.0.0.1
+2023-08-13 22:23:11.415 | INFO     | chatgpt_user.views:send_verification_email:61 - 邮件发送成功,接收人:test2@163.com, 请求人IP:127.0.0.1
+2023-08-13 22:25:10.720 | INFO     | chatgpt_user.views:send_verification_email:61 - 邮件发送成功,接收人:test3@qq.com, 请求人IP:127.0.0.1
+2023-08-13 22:25:43.483 | INFO     | chatgpt_user.views:list:183 - test3@qq.com
+2023-08-13 22:26:16.861 | SUCCESS  | chatgpt_user.views:create:235 - test3@qq.com登录成功
+2023-08-13 22:26:18.143 | INFO     | chatgpt_user.views:list:244 - {'token_type': 'access', 'exp': 1691940376, 'iat': 1691936776, 'jti': '79601bfc119f48518df09a2fb99b8696', 'user_id': 31, 'username': 'test3@qq.com'}
+2023-08-13 22:28:25.322 | SUCCESS  | chatgpt_user.views:create:235 - test3@qq.com登录成功

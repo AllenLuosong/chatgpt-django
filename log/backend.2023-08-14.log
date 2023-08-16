@@ -1,0 +1,9 @@
+2023-08-14 10:46:18.345 | INFO     | chatgpt_user.views:create:133 - 验证通过
+2023-08-14 10:46:19.355 | INFO     | chatgpt_user.views:send_verification_email:61 - 邮件发送成功,接收人:test4@qq.com, 请求人IP:127.0.0.1
+2023-08-14 11:45:42.306 | INFO     | chatgpt_user.views:send_verification_email:61 - 邮件发送成功,接收人:test4@qq.com, 请求人IP:127.0.0.1
+2023-08-14 12:59:09.560 | INFO     | chatgpt_user.views:send_verification_email:61 - 邮件发送成功,接收人:test4@qq.com, 请求人IP:127.0.0.1
+2023-08-14 12:59:30.624 | WARNING  | chatgpt_user.views:create:215 - test4@qq.com注册流程未完成
+2023-08-14 12:59:38.238 | WARNING  | chatgpt_user.views:create:215 - test4@qq.com注册流程未完成
+2023-08-14 13:00:37.285 | INFO     | chatgpt_user.views:list:177 - test4@qq.com
+2023-08-14 13:01:14.584 | SUCCESS  | chatgpt_user.views:create:229 - test4@qq.com登录成功
+2023-08-14 22:12:14.001 | SUCCESS  | chatgpt_user.views:create:225 - 1755838904@qq.com登录成功

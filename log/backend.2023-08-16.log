@@ -1,0 +1,104 @@
+2023-08-16 09:11:37.870 | SUCCESS  | chatgpt_user.views:create:225 - test4@qq.com登录成功
+2023-08-16 10:09:48.525 | INFO     | chatgpt_chat.views:creat:47 - <StreamingHttpResponse status_code=200, "application/octet-stream">
+2023-08-16 10:10:48.553 | INFO     | chatgpt_chat.views:creat:47 - <StreamingHttpResponse status_code=200, "application/octet-stream">
+2023-08-16 10:12:27.133 | INFO     | chatgpt_chat.views:creat:48 - <StreamingHttpResponse status_code=200, "application/octet-stream">
+2023-08-16 10:12:27.141 | INFO     | chatgpt_chat.views:generate_text:33 - ('6b24eb9f-a8a9-4b04-a80f-bd6757a3e35b',)
+2023-08-16 10:13:03.022 | INFO     | chatgpt_chat.views:creat:48 - <StreamingHttpResponse status_code=200, "application/octet-stream">
+2023-08-16 10:13:03.033 | INFO     | chatgpt_chat.views:generate_text:33 - <class 'tuple'>
+2023-08-16 10:14:33.404 | INFO     | chatgpt_chat.views:creat:48 - <StreamingHttpResponse status_code=200, "application/octet-stream">
+2023-08-16 10:14:33.417 | INFO     | chatgpt_chat.views:generate_text:33 - ebc66d1f-f3b6-4cdb-89d8-04bb859ce37b
+2023-08-16 10:14:53.770 | INFO     | chatgpt_chat.views:creat:48 - <StreamingHttpResponse status_code=200, "application/octet-stream">
+2023-08-16 10:14:53.778 | INFO     | chatgpt_chat.views:generate_text:33 - ('e',)
+2023-08-16 10:15:29.462 | INFO     | chatgpt_chat.views:creat:48 - <StreamingHttpResponse status_code=200, "application/octet-stream">
+2023-08-16 10:15:29.475 | INFO     | chatgpt_chat.views:generate_text:33 - <class 'uuid.UUID'>
+2023-08-16 10:16:04.847 | INFO     | chatgpt_chat.views:creat:47 - <StreamingHttpResponse status_code=200, "application/octet-stream">
+2023-08-16 10:27:02.943 | INFO     | chatgpt_chat.views:creat:48 - <StreamingHttpResponse status_code=200, "application/octet-stream">
+2023-08-16 10:27:48.604 | INFO     | chatgpt_chat.views:creat:48 - <StreamingHttpResponse status_code=200, "application/octet-stream">
+2023-08-16 10:39:22.904 | INFO     | chatgpt_chat.views:creat:48 - <StreamingHttpResponse status_code=200, "application/octet-stream">
+2023-08-16 11:08:19.580 | INFO     | chatgpt_chat.views:creat:34 - s
+2023-08-16 11:29:28.742 | INFO     | chatgpt_chat.views:creat:47 - 你是谁
+2023-08-16 13:12:20.847 | INFO     | chatgpt_chat.views:creat:47 - 你是谁
+2023-08-16 13:12:23.288 | INFO     | chatgpt_chat.views:creat:49 - {"error":{"message":"currently model  is not support","type":"error","param":null,"code":null}}
+2023-08-16 13:25:27.875 | INFO     | chatgpt_chat.views:creat:47 - hello
+2023-08-16 13:25:27.884 | INFO     | chatgpt_chat.views:creat:48 - https://api.openai-proxy.org/v1/chat/completions
+2023-08-16 13:25:27.888 | INFO     | chatgpt_chat.views:creat:49 - {'model': 'gpt-3.5-turbo', 'messages': [{'role': 'system', 'content': 'You are a helpful assistant.'}, {'role': 'user', 'content': 'hello'}]}
+2023-08-16 13:25:28.829 | INFO     | chatgpt_chat.views:creat:51 - {"error":{"message":"currently model  is not support","type":"error","param":null,"code":null}}
+2023-08-16 13:32:14.090 | INFO     | chatgpt_chat.views:creat:47 - {'Content-Type': 'application/json', 'Authorization': 'Bearer sk-HgS9O1RfNDJLY2pzt3onZOcVaEC7Qf529TvsS9MNiLb2BVUH'}
+2023-08-16 13:32:14.099 | INFO     | chatgpt_chat.views:creat:48 - https://api.openai-proxy.org/v1/chat/completions
+2023-08-16 13:32:14.105 | INFO     | chatgpt_chat.views:creat:49 - {'model': 'gpt-3.5-turbo', 'messages': [{'role': 'system', 'content': 'You are a helpful assistant.'}, {'role': 'user', 'content': '你好'}]}
+2023-08-16 13:33:47.392 | INFO     | chatgpt_chat.views:creat:47 - {'Content-Type': 'application/json', 'Authorization': 'Bearer sk-HgS9O1RfNDJLY2pzt3onZOcVaEC7Qf529TvsS9MNiLb2BVUH'}
+2023-08-16 13:33:47.396 | INFO     | chatgpt_chat.views:creat:48 - https://api.openai-proxy.org/v1/chat/completions
+2023-08-16 13:33:47.401 | INFO     | chatgpt_chat.views:creat:49 - {'model': 'gpt-3.5-turbo', 'messages': [{'role': 'system', 'content': 'You are a helpful assistant.'}, {'role': 'user', 'content': '你好'}]}
+2023-08-16 13:34:08.855 | INFO     | chatgpt_chat.views:creat:47 - {'Content-Type': 'application/json', 'Authorization': 'Bearer sk-HgS9O1RfNDJLY2pzt3onZOcVaEC7Qf529TvsS9MNiLb2BVUH'}
+2023-08-16 13:34:08.872 | INFO     | chatgpt_chat.views:creat:48 - https://api.closeai-proxy.xyzv1/chat/completions
+2023-08-16 13:34:08.876 | INFO     | chatgpt_chat.views:creat:49 - {'model': 'gpt-3.5-turbo', 'messages': [{'role': 'system', 'content': 'You are a helpful assistant.'}, {'role': 'user', 'content': '你好'}]}
+2023-08-16 13:35:29.149 | INFO     | chatgpt_chat.views:creat:47 - {'Content-Type': 'application/json', 'Authorization': 'Bearer sk-HgS9O1RfNDJLY2pzt3onZOcVaEC7Qf529TvsS9MNiLb2BVUH'}
+2023-08-16 13:35:29.160 | INFO     | chatgpt_chat.views:creat:48 - https://api.closeai-proxy.xyz/v1/chat/completions
+2023-08-16 13:35:29.166 | INFO     | chatgpt_chat.views:creat:49 - {'model': 'gpt-3.5-turbo', 'messages': [{'role': 'system', 'content': 'You are a helpful assistant.'}, {'role': 'user', 'content': '你好'}]}
+2023-08-16 13:35:29.950 | INFO     | chatgpt_chat.views:creat:51 - {"error":{"message":"currently model  is not support","type":"error","param":null,"code":null}}
+2023-08-16 14:11:17.139 | INFO     | chatgpt_chat.views:creat:42 - {
+  "id": "chatcmpl-8KRfwreSy9plgHelT84iTfMli6nON",
+  "object": "chat.completion",
+  "created": 1692166230,
+  "model": "gpt-3.5-turbo-0613",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Hello! How can I assist you today?"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 19,
+    "completion_tokens": 9,
+    "total_tokens": 28
+  }
+}
+2023-08-16 14:16:10.122 | SUCCESS  | chatgpt_user.views:create:225 - test4@qq.com登录成功
+2023-08-16 14:28:53.451 | INFO     | chatgpt_chat.views:creat:38 - {
+  "id": "chatcmpl-bUG9ReAyLw9VcqfxmzYcZI0Obi7l0",
+  "object": "chat.completion",
+  "created": 1692167331,
+  "model": "gpt-3.5-turbo-0613",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "\u4f60\u597d! \u6709\u4ec0\u4e48\u6211\u53ef\u4ee5\u5e2e\u52a9\u4f60\u7684\u5417?"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 19,
+    "completion_tokens": 19,
+    "total_tokens": 38
+  }
+}
+2023-08-16 14:28:53.455 | INFO     | chatgpt_chat.views:creat:40 - 你好! 有什么我可以帮助你的吗?
+2023-08-16 14:29:08.735 | INFO     | chatgpt_chat.views:creat:38 - {
+  "id": "chatcmpl-qUuiQd3pgoz51YjoVmW4Ah2bSkzUy",
+  "object": "chat.completion",
+  "created": 1692167344,
+  "model": "gpt-3.5-turbo-0613",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "\u6211\u662f\u4e00\u4e2a\u6709\u7528\u7684\u52a9\u624b\uff0c\u53ef\u4ee5\u5e2e\u52a9\u60a8\u56de\u7b54\u95ee\u9898\u3001\u63d0\u4f9b\u4fe1\u606f\u548c\u6267\u884c\u4efb\u52a1\u3002\u8bf7\u95ee\u6709\u4ec0\u4e48\u6211\u53ef\u4ee5\u5e2e\u52a9\u60a8\u7684\u5417\uff1f"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 21,
+    "completion_tokens": 45,
+    "total_tokens": 66
+  }
+}
+2023-08-16 14:29:08.739 | INFO     | chatgpt_chat.views:creat:40 - 我是一个有用的助手，可以帮助您回答问题、提供信息和执行任务。请问有什么我可以帮助您的吗？
