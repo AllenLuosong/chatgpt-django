@@ -1,0 +1,43 @@
+2023-08-17 09:15:38.592 | SUCCESS  | chatgpt_user.views:create:225 - 1755838904@qq.com登录成功
+2023-08-17 09:19:24.411 | INFO     | chatgpt_chat.views:creat:36 - {
+  "id": "chatcmpl-UDagVKbCaZvtK2Uy7n9J3huJVnZ5g",
+  "object": "chat.completion",
+  "created": 1692235162,
+  "model": "gpt-3.5-turbo-0613",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "\u6211\u662f\u4e00\u4e2a\u80fd\u7ed9\u4f60\u5e2e\u52a9\u7684\u52a9\u624b\u3002\u6211\u53ef\u4ee5\u56de\u7b54\u4f60\u7684\u95ee\u9898\uff0c\u63d0\u4f9b\u4fe1\u606f\uff0c\u4ee5\u53ca\u5b8c\u6210\u5e38\u89c1\u7684\u4efb\u52a1\u3002\u6709\u4ec0\u4e48\u6211\u53ef\u4ee5\u5e2e\u52a9\u4f60\u7684\u5417\uff1f"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 21,
+    "completion_tokens": 51,
+    "total_tokens": 72
+  }
+}
+2023-08-17 09:19:24.413 | INFO     | chatgpt_chat.views:creat:38 - {
+  "id": "chatcmpl-UDagVKbCaZvtK2Uy7n9J3huJVnZ5g",
+  "object": "chat.completion",
+  "created": 1692235162,
+  "model": "gpt-3.5-turbo-0613",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "\u6211\u662f\u4e00\u4e2a\u80fd\u7ed9\u4f60\u5e2e\u52a9\u7684\u52a9\u624b\u3002\u6211\u53ef\u4ee5\u56de\u7b54\u4f60\u7684\u95ee\u9898\uff0c\u63d0\u4f9b\u4fe1\u606f\uff0c\u4ee5\u53ca\u5b8c\u6210\u5e38\u89c1\u7684\u4efb\u52a1\u3002\u6709\u4ec0\u4e48\u6211\u53ef\u4ee5\u5e2e\u52a9\u4f60\u7684\u5417\uff1f"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 21,
+    "completion_tokens": 51,
+    "total_tokens": 72
+  }
+}

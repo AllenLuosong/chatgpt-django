@@ -1,0 +1,22 @@
+2023-08-16 21:43:05.873 | SUCCESS  | chatgpt_user.views:create:225 - test4@qq.com登录成功
+2023-08-16 21:43:21.692 | INFO     | chatgpt_chat.views:creat:36 - {
+  "id": "chatcmpl-3GHjdWfwsvm2qee2A0AcsE8THmhGz",
+  "object": "chat.completion",
+  "created": 1692193399,
+  "model": "gpt-3.5-turbo-0613",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "\u6211\u662f\u4e00\u4e2aAI\u52a9\u624b\uff0c\u53ef\u4ee5\u5e2e\u52a9\u60a8\u56de\u7b54\u95ee\u9898\u548c\u63d0\u4f9b\u4fe1\u606f\u3002\u6709\u4ec0\u4e48\u6211\u53ef\u4ee5\u5e2e\u52a9\u60a8\u7684\u5417\uff1f"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 21,
+    "completion_tokens": 38,
+    "total_tokens": 59
+  }
+}

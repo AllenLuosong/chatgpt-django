@@ -32,5 +32,7 @@ python -m venv venv
 pip install -r requirement.txt
 
 # 运行后端
+python manage.py migrate
+python manage.py makemigrations
 python manage.py runserver
 ```

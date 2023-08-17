@@ -52,7 +52,7 @@ def send_verification_email(request, to_email, verify_code,verify_ip, expire_at,
     # 设置邮件内容类型为html
     email.content_subtype = 'html'
     # 发送邮件
-    # email.send()
+    email.send()
     EmailVerifyCode.objects.create(to_email_address=to_email, verify_code=verify_code, verify_ip=verify_ip, expire_at=expire_at).save()
     logger.info(f"邮件发送成功,接收人:{to_email}, 请求人IP:{verify_ip}")
 

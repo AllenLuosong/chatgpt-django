@@ -23,6 +23,7 @@ class Chat(CustomModelViewSet):
        
     def creat(self, request):
         prompt = request.data.get("prompt")
+        logger.info(f"prompt-{prompt}")
         openai.api_key = settings.OPENAI_API_KEY
         completion = openai.ChatCompletion.create(
           api_base = settings.OPENAI_API_BASE_URL,
@@ -31,9 +32,10 @@ class Chat(CustomModelViewSet):
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": prompt }
           ],
-          timeout = 30
+          request_timeout = 30
         )
         text = completion.choices[0].message.content
+        logger.info(f"completion-{completion}")
         def generate_text(text=text):
             # 流媒体文本处理方法
             id = str(uuid.uuid4()),
