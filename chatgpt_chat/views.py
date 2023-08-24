@@ -27,22 +27,18 @@ class Chat(CustomModelViewSet):
     def creat(self, request):
         prompt = request.data.get("prompt")
         logger.info(f"prompt-{prompt}")
-        # openai.api_key = settings.OPENAI_API_KEY
-        # completion = openai.ChatCompletion.create(
-        #   api_base = settings.OPENAI_API_BASE_URL,
-        #   model="gpt-3.5-turbo",
-        #   messages=[
-        #     {"role": "system", "content": "You are a helpful assistant."},
-        #     {"role": "user", "content": prompt }
-        #   ],
-        #   request_timeout = 30,
-        #   # stream=True
-        # )
-        # for chunk in completion:
-        #   logger.info(chunk.choices[0].delta)
-        # text = completion.choices[0].message.content
-        # logger.info(f"completion-{completion}")
-        text = "我是一个AI助手，可以帮助您回答问题和提供信息。有什么我可以帮助您的吗我是一个AI助手，可以帮助您回答问题和提供信息。有什么我可以帮助您的吗我是一个AI助手，可以帮助您回答问题和提供信息。有什么我可以帮助您的吗我是一个AI助手，可以帮助您回答问题和提供信息。有什么我可以帮助您的吗我是一个AI助手，可以帮助您回答问题和提供信息。有什么我可以帮助您的吗"
+        openai.api_key = settings.OPENAI_API_KEY
+        completion = openai.ChatCompletion.create(
+          api_base = settings.OPENAI_API_BASE_URL,
+          model="gpt-3.5-turbo",
+          messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt }
+          ],
+          request_timeout = 30,
+        )
+        text = completion.choices[0].message.content
+        logger.info(f"completion-{completion}")
         def generate_text(text=text):
             # 流媒体文本处理方法
             id = str(uuid.uuid4()),
