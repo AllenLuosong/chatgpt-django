@@ -17,6 +17,19 @@ cp .env.example .env
 
 ```
 
+```shell
+# Nginx sever的配置
+    listen       80;
+    listen  [::]:80;
+    server_name  localhost;
+
+    location /api/ {
+        proxy_pass   http://chatgpt-django:9004/;
+    }
+
+
+
+```
 
 ```shell
 # 克隆项目
@@ -25,14 +38,6 @@ git clone https://github.com/AllenLuosong/chatgpt-django
 # 进入项目
 cd chatgpt-django
 
-# 创建虚拟环境
-python -m venv venv
-
-# 安装依赖
-pip install -r requirement.txt
-
-# 运行后端
-python manage.py migrate
-python manage.py makemigrations
-python manage.py runserver
+# 使用docker启动
+docker-compose up -d 
 ```

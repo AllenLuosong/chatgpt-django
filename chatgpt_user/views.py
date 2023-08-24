@@ -132,7 +132,7 @@ class RegisterModelViewSet(CustomModelViewSet):
         expire_at = timezone.now() + datetime.timedelta(minutes=int(settings.EMAIL_TIMEOUT))
         verify_ip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
         send_verification_email(request, username, verify_code, verify_ip, expire_at, verificationUrl)
-        return DetailResponse(data={}, msg="注册成功")
+        return DetailResponse(data={})
 
 
     def set_password(self, raw_password, salt):
@@ -175,7 +175,7 @@ class verifyEmailCodeViewSet(CustomModelViewSet):
           res.verified = 1
           res.update_datetime = timezone.now()
           res.save()         
-          return DetailResponse(data={}, msg="验证成功")
+          return DetailResponse(data={})
       else:
           return ErrorResponse(data='null', msg='验证码过期或不存在,请重新注册')
 
@@ -223,7 +223,7 @@ class LoginViewSet(CustomModelViewSet):
             "baseUserId": baseUserId,
         }
         logger.success(f"{user}登录成功")
-        return DetailResponse(data=result, msg="登录成功")
+        return DetailResponse(data=result)
 
 class UserInfoViewSet(CustomModelViewSet):
     serializer_class = UserInfoSerializer
@@ -239,4 +239,4 @@ class UserInfoViewSet(CustomModelViewSet):
                 "description": res.description,
                 "avatarUrl": res.avatar_version
         }
-        return DetailResponse(data=result, msg="获取成功")
+        return DetailResponse(data=result)
