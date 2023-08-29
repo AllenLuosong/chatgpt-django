@@ -3,14 +3,15 @@
 '''
 Filename         : urls.py
 Description      : 
-Time             : 2023/08/05 22:17:00
+Time             : 2023/08/27 19:09:48
 Author           : AllenLuo
 Version          : 1.0
 '''
 
+
 from django.urls import path
-from chatgpt_chat.views import Chat
+from chatgpt_image.views import Image
 
 urlpatterns = [
-    path("send", Chat.as_view({"post": "create"})),
+    path("send", Image.as_view({"post": "create"})),
 ]

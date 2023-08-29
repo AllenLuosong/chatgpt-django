@@ -18,41 +18,49 @@ from django.conf import settings
 from loguru import logger
 import openai
 from rest_framework import permissions
-from django.http import HttpResponse
+from utils.json_response import ErrorResponse
 
 class Chat(CustomModelViewSet):
     serializer_class = ChatMessageSend
     permission_classes = (permissions.IsAuthenticated,)
+    openai.api_key = settings.OPENAI_API_KEY
+    openai.api_base = settings.OPENAI_API_BASE_URL
+    openai_model = settings.MODEL
 
-    def creat(self, request):
-        prompt = request.data.get("prompt")
+    def create(self, request):
+        prompt = request.data["prompt"]
         logger.info(f"prompt-{prompt}")
-        openai.api_key = settings.OPENAI_API_KEY
-        completion = openai.ChatCompletion.create(
-          api_base = settings.OPENAI_API_BASE_URL,
-          model="gpt-3.5-turbo",
-          messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": prompt }
-          ],
-          request_timeout = 30,
-        )
-        text = completion.choices[0].message.content
-        logger.info(f"completion-{completion}")
-        def generate_text(text=text):
-            # 流媒体文本处理方法
-            id = str(uuid.uuid4()),
-            parentMessageId = str(uuid.uuid4()),
-            conversationId = str(uuid.uuid4()),
-            for i in range(len(text)):
-                data = {
-                    "role": "null",
-                    "id": id[0],
-                    "parentMessageId": parentMessageId[0],
-                    "conversationId": conversationId[0],
-                    "text": text[:i+1],
-                }
-                yield str(json.dumps(data, ensure_ascii=False)) + '\n'
-                time.sleep(0.05)
-        response = StreamingHttpResponse(streaming_content=generate_text(), content_type='application/octet-stream')
-        return response
+        try:
+            completion = openai.ChatCompletion.create(
+                model=self.openai_model,
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": prompt}
+                ],
+                request_timeout = 30,
+            )
+            logger.info(f"completion-{completion}")
+
+            chat_text = completion.choices[0].message.content
+            
+            def generate_streaming_text(text=chat_text):
+                # 流媒体文本处理方法
+                id = str(uuid.uuid4())
+                parent_message_id = str(uuid.uuid4())
+                conversation_id = str(uuid.uuid4())
+                for i, char in enumerate(text):
+                    data = {
+                        "role": "null",
+                        "id": id,
+                        "parentMessageId": parent_message_id,
+                        "conversationId": conversation_id,
+                        "text": text[:i + 1],
+                    }
+                    yield f"{json.dumps(data, ensure_ascii=False)}\n"
+                    time.sleep(0.05)
+            response = StreamingHttpResponse(streaming_content=generate_streaming_text(), content_type='application/octet-stream')
+            return response
+        except BaseException as e:
+            msg="请求失败,请稍后再试"
+            logger.error(f'{msg}-后台返回-{e}')
+            return ErrorResponse(code=500, data={}, msg=msg)

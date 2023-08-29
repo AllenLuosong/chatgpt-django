@@ -15,7 +15,7 @@ class FrontUserExtraEmail(AbstractUser, models.Model):
         ('1', _('verified')),
     )
     id = models.AutoField(primary_key=True)
-    username = models.EmailField(max_length=255, verbose_name="登录邮箱", null=True, blank=True, help_text="登录邮箱")
+    username = models.EmailField(max_length=255, verbose_name="登录邮箱", unique=True, null=True, blank=True, help_text="登录邮箱")
     password = models.CharField(max_length=255, verbose_name="登录密码", null=True, blank=True, help_text="密码")
     salt = models.CharField(max_length=255, verbose_name="密码盐值", null=True, blank=True, help_text="密码盐值")
     verified = models.IntegerField(_('Status (*)'), choices=VERIFIED_STATUS_CHOICES, default='0', help_text="是否验证 0 否 1 是")

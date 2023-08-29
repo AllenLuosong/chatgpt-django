@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from loguru import logger
 import os
+import sys
 from datetime import timedelta
 from dotenv import find_dotenv, load_dotenv
 load_dotenv(find_dotenv(".env"))
@@ -28,7 +29,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-g79*q+_qc^o9#3d5+9taxzt8cur&49!u@em340w9tkkqm^h(7x'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if 'win' in sys.platform:
+  DEBUG = True 
+else:
+  DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -48,6 +52,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'django_comment_migrate',
     'chatgpt_chat',
+    'chatgpt_image',
 ]
 
 DCM_COMMENT_APP=['app']
@@ -211,25 +216,19 @@ REST_FRAMEWORK = {
 }
 
 
-# ================================================= #
-# **************** 自定义后台认证配置  ************** #
-# ================================================= #
-AUTHENTICATION_BACKENDS = (
-    'chatgpt_user.views.CustomBackend',
-)
-
 
 # ================================================= #
 # **************** Simple JWT配置     ************* #
 # ================================================= #
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=300), # access token的时效
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=36), # access token的时效
 }
 
 
 # ================================================= #
 # **************** open ai配置  ******************** #
 # ================================================= #
+
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 OPENAI_API_BASE_URL = os.environ.get("OPENAI_API_BASE_URL")
 MODEL = os.environ.get("MODEL")
