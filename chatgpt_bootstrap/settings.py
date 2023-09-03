@@ -40,7 +40,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django_comment_migrate',
     'chatgpt_chat',
     'chatgpt_image',
+    'django_apscheduler',
 ]
 
 DCM_COMMENT_APP=['app']
@@ -151,7 +152,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 并且会影响到一些外键和多对多关系的构造。在你有表格被创建后更改此设置是不被 makemigrations 支持的，
 并且会导致你需要手动修改数据库结构，从旧用户表中导出数据，可能重新应用一些迁移。
 """
-AUTH_USER_MODEL = 'chatgpt_user.FrontUserExtraEmail'
+AUTH_USER_MODEL = 'chatgpt_user.FrontUserBase'
 
 # ================================================= #
 # **************** 验证码配置  ******************* #
@@ -177,13 +178,13 @@ CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge' #字母验证�
 # ================================================= #
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.environ.get("EMAIL_HOST")
-EMAIL_PORT = 25 # django 内端口使用25发送邮件
+EMAIL_PORT = os.environ.get("EMAIL_PORT")
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 EMAIL_TIMEOUT = 10
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
-VERIFICATION_REDIRECT_URL = 'http://www.hichat.shop/#/emailValidation?type=email&verifyCode='
+VERIFICATION_REDIRECT_URL = 'http://wiki.hichat.shop/#/emailValidation?type=email&verifyCode='
 EMAIL_SUBJECT = 'AI-Chat 注册'
 
 # ================================================= #
@@ -210,9 +211,10 @@ REST_FRAMEWORK = {
 
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '5/min',    # 匿名用户 每分钟所有接口总计只能访问5次
-        'user': '20/min'    # 登录认证用户 每分钟所有接口总计只能访问10次
-    }
+        'anon': '5/min',    # 匿名用户或未登录用户每分钟所有接口总计访问次数
+        'user': '20/min'    # 登录认证用户 每分钟所有接口总计访问次数
+    },
+    'EXCEPTION_HANDLER': 'utils.exception.Custom_exception_handler'  # 自定义的异常处理
 }
 
 

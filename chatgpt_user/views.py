@@ -34,7 +34,24 @@ from faker import Faker
 import jwt
 from rest_framework.permissions import AllowAny
 from rest_framework import permissions
+from apscheduler.schedulers.background import BackgroundScheduler
+from django_apscheduler.jobstores import DjangoJobStore, register_events, register_job
 
+#开启定时工作
+try:
+    # 实例化调度器
+    scheduler = BackgroundScheduler()
+    # 调度器使用DjangoJobStore()
+    scheduler.add_jobstore(DjangoJobStore(), "default")
+    # 另一种方式为每天固定时间执行任务，对应代码为：
+    @register_job(scheduler, 'cron', hour='1', minute='17', second='01',id='task', replace_existing=True )
+    def my_job():
+        # 更新所有用户的调用次数为0
+        FrontUserBase.objects.all().update(call_count=0, update_datetime=datetime.datetime.now())
+        logger.info("已重置所有用户的调用次数")
+    scheduler.start()
+except Exception as e:
+    logger.error(f"定时任务异常-{e}")
 
 def send_verification_email(request, to_email, verify_code,verify_ip, expire_at, verificationUrl):
     """ 邮件发送方法 
@@ -158,26 +175,32 @@ class RegisterModelViewSet(CustomModelViewSet):
 class verifyEmailCodeViewSet(CustomModelViewSet):
     """ 校验邮件验证码方法
     """
-    serializer_class = UserInfoSerializer
-
     def list(self, request):
       verifyCode = request.GET.get('code')
       verifyCode_value = EmailVerifyCode.objects.filter(verify_code=verifyCode, expire_at__gt=timezone.now()).first()
       if verifyCode_value:
+          username = EmailVerifyCode.objects.filter(verify_code=verifyCode_value.verify_code).first().to_email_address
+          # 核销认证通过
+          res = FrontUserExtraEmail.objects.filter(username=username).first()
+          res.verified = 1 # 先更新认证状态
+          res.update_datetime = timezone.now()
+          res.save()   
+
+          # 获取最新一次注册时使用的密码及加密盐
+          password = res.password
+          salt = res.salt
+
           faker = Faker()
           faker.word()
           nikename = "ChatAI_" + faker.word()
           ip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
-          user = EmailVerifyCode.objects.filter(verify_code=verifyCode_value.verify_code).first().to_email_address
-          FrontUserBase.objects.create(username=user,nickname=nikename, last_login_ip=ip) # 邮箱验证通过写入用户基础信息表
-          logger.info(f"{user}")
-          res = FrontUserExtraEmail.objects.filter(username=user).first()
-          res.verified = 1
-          res.update_datetime = timezone.now()
-          res.save()         
-          return DetailResponse(data={})
+          # 邮箱验证通过写入用户基础信息表
+          FrontUserBase.objects.create(username=username, nickname=nikename, password=password, salt=salt, last_login_ip=ip)
+          msg = f"{username}注册邮件核销成功"
+          logger.info(msg)
+          return DetailResponse(msg)
       else:
-          return ErrorResponse(data='null', msg='验证码过期或不存在,请重新注册')
+          return ErrorResponse(msg='验证码过期或不存在,请重新注册')
 
 
 class CustomTokenGenerator(PasswordResetTokenGenerator):
@@ -208,34 +231,36 @@ class LoginViewSet(CustomModelViewSet):
             logger.warning(f"{user}未注册")
             return ErrorResponse(msg='账号未注册')
         if user.verified != 1:
-            logger.warning(f"{user}注册流程未完成")
+            logger.warning(f"{user.username}注册流程未完成")
             return ErrorResponse(msg='注册流程未完成,请完成注册或重新注册')
         
-        salted_password = user.password
+        res = FrontUserBase.objects.filter(username=username).first()
+        salted_password = res.password
         if not check_password(password, salted_password):    # 检查密码是否正确
             logger.warning(f"{user}账号/密码不匹配")
             return ErrorResponse(msg='账号/密码不匹配')
-
-        token = LoginSerializer.get_token(user).access_token  # 生成access_token
-        baseUserId = user.id
+        token = LoginSerializer.get_token(res).access_token  # 生成access_token
+        baseUserId = res.id
         result = {
             "token": str(token),
             "baseUserId": baseUserId,
         }
-        logger.success(f"{user}登录成功")
+        logger.success(f"{user.username}登录成功")
         return DetailResponse(data=result)
 
 class UserInfoViewSet(CustomModelViewSet):
     serializer_class = UserInfoSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
     def list(self, request):
         token = request.headers.get('Authorization').split(' ')[1]
         decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-        res = FrontUserBase.objects.filter(username=decoded_token["username"]).first()
+        customer_id=decoded_token["id"]
+        res = FrontUserBase.objects.filter(id=customer_id).first()
         result = {
-                "baseUserId": decoded_token["user_id"],
+                "baseUserId": customer_id,
                 "nickname": res.nickname,
-                "email": decoded_token["username"],
+                "email": res.username,
                 "description": res.description,
                 "avatarUrl": res.avatar_version
         }

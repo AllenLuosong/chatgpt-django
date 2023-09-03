@@ -9,7 +9,7 @@ Version          : 1.0
 '''
 
 
-from chatgpt_user.models import FrontUserExtraEmail
+from chatgpt_user.models import FrontUserExtraEmail, FrontUserBase
 from utils.serializers import CustomModelSerializer
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -52,13 +52,12 @@ class LoginSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super(LoginSerializer, cls).get_token(user)
-
         # 添加额外信息
-        token['username'] = user.username
+        token['id'] = user.id
         return token
     
     class Meta:
-        model = FrontUserExtraEmail
+        model = FrontUserBase
         fields = ["username", "password"]
         read_only_fields = ["id"]
 
