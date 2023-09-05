@@ -40,7 +40,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    # 'django.contrib.admin',
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -211,8 +211,8 @@ REST_FRAMEWORK = {
 
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '5/min',    # 匿名用户或未登录用户每分钟所有接口总计访问次数
-        'user': '20/min'    # 登录认证用户 每分钟所有接口总计访问次数
+        'anon': '20/min',    # 匿名用户或未登录用户每分钟所有接口总计访问次数
+        'user': '50/min'    # 登录认证用户 每分钟所有接口总计访问次数
     },
     'EXCEPTION_HANDLER': 'utils.exception.Custom_exception_handler'  # 自定义的异常处理
 }

@@ -133,17 +133,31 @@ class RegisterModelViewSet(CustomModelViewSet):
             return ErrorResponse(msg="验证码不能为空")
 
         picCodeSessionId = request.data.get('picCodeSessionId',None)
-        self.image_code = CustomerCaptchaStore.objects.filter(pic_code_seesion_id=picCodeSessionId).first()
-        self._expiration = CustomerCaptchaStore.objects.get(pic_code_seesion_id=picCodeSessionId).expiration
-        if  timezone.now()  > self._expiration:  # 先判断是否过期
-          return ErrorResponse(msg="验证码过期,请刷新重试") 
-        elif  self.image_code and (self.image_code.response == picVerificationCode or self.image_code.challenge == picVerificationCode):
-            self.image_code.delete() # 验证通过将数据库存储的验证码删除
-        else:
-            return ErrorResponse(msg="验证码错误")
+        try:
+          self.image_code = CustomerCaptchaStore.objects.filter(pic_code_seesion_id=picCodeSessionId).first()
+          self._expiration = CustomerCaptchaStore.objects.get(pic_code_seesion_id=picCodeSessionId).expiration
+          if  timezone.now()  > self._expiration:  # 先判断是否过期
+            return ErrorResponse(msg="验证码过期,请刷新重试") 
+          elif  self.image_code and (self.image_code.response == picVerificationCode or self.image_code.challenge == picVerificationCode):
+              self.image_code.delete() # 验证通过将数据库存储的验证码删除
+          else:
+              return ErrorResponse(msg="验证码错误,请输入正确的验证码")
+        except:
+              return ErrorResponse(msg="验证码错误,请刷新重试")
+
 
         salt = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(6))
-        FrontUserExtraEmail.objects.create(username=username, password=self.set_password(password,salt), salt=salt).save()
+        record, b = FrontUserExtraEmail.objects.get_or_create(username=username, verified=1, 
+            defaults={            
+            'password':self.set_password(password,salt),
+            'salt': salt,
+             'verified': 0
+            })
+        if not b:
+            msg = "该账号已注册,请登录"
+            logger.warning(f"{username}-该账号已注册,请登录")
+            return ErrorResponse(msg=msg)
+        # FrontUserExtraEmail.objects.create(username=username, password=self.set_password(password,salt), salt=salt).save()
         verify_code = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(32))
         verificationUrl = settings.VERIFICATION_REDIRECT_URL + verify_code
         expire_at = timezone.now() + datetime.timedelta(minutes=int(settings.EMAIL_TIMEOUT))
@@ -226,15 +240,15 @@ class LoginViewSet(CustomModelViewSet):
         if password is None:
             return ErrorResponse(msg="密码不能为空")
         user = FrontUserExtraEmail.objects.filter(username=username).first()
+        res = FrontUserBase.objects.filter(username=username).first()
 
-        if not user:  # 检查账号是否存在及是否验证完成
-            logger.warning(f"{user}未注册")
+        if not res:  # 检查账号是否存在及是否验证完成
+            logger.warning(f"{username}未注册")
             return ErrorResponse(msg='账号未注册')
         if user.verified != 1:
-            logger.warning(f"{user.username}注册流程未完成")
+            logger.warning(f"{username}注册流程未完成")
             return ErrorResponse(msg='注册流程未完成,请完成注册或重新注册')
         
-        res = FrontUserBase.objects.filter(username=username).first()
         salted_password = res.password
         if not check_password(password, salted_password):    # 检查密码是否正确
             logger.warning(f"{user}账号/密码不匹配")
@@ -245,7 +259,7 @@ class LoginViewSet(CustomModelViewSet):
             "token": str(token),
             "baseUserId": baseUserId,
         }
-        logger.success(f"{user.username}登录成功")
+        logger.success(f"{username}登录成功")
         return DetailResponse(data=result)
 
 class UserInfoViewSet(CustomModelViewSet):
