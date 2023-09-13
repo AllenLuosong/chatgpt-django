@@ -11,7 +11,7 @@ Version          : 1.0
 
 from utils.serializers import CustomModelSerializer
 from rest_framework import serializers
-from chatgpt_image.models import ImageMessage
+from chatgpt_image.models import ImageMessage, FileList
 from django.utils.translation import gettext_lazy as _
 
 
@@ -27,3 +27,20 @@ class ImageMessageSend(CustomModelSerializer):
     class Meta:
         model = ImageMessage
         fields = ("size", "n", "prompt",)
+
+
+class FileSerializer(CustomModelSerializer):
+    url = serializers.SerializerMethodField(read_only=True)
+
+    def get_url(self, instance):
+        # 获取本地保存路径
+        return str(instance.url)
+
+    class Meta:
+        model = FileList
+        fields = "__all__"
+
+    def create(self, validated_data):
+        validated_data['name'] = str(self.initial_data.get('file'))
+        validated_data['url'] = self.initial_data.get('file')
+        return super().create(validated_data)

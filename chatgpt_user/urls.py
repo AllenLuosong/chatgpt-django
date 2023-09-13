@@ -21,5 +21,6 @@ urlpatterns = [
     path("info", UserInfoViewSet.as_view({"get": "list"})),
     # path('token', ObtainTokenPairViewSet.as_view(), name='token_obtain_pair'),
     path('token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
+    path("login", LoginViewSet.as_view({"post": "create"}))
 
 ]

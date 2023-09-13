@@ -17,13 +17,13 @@ class LimitedAccessPermission(BasePermission):
     def has_permission(self, request, view):
         # 检查用户是否为VIP且是否在有效期内
         if request.user.VIP_TYPE == 1 and request.user.vip_expire_at > datetime.now():
-            logger.info(f"{request.user.username}-未过期的VIP用户,允许访问")
+            logger.info(f"{request.user.username}-未过期VIP用户,允许访问")
             return True
         else:
             # 非vip用户或已过期用户只允许每天调用5次
-            logger.info(f"{request.user.username}-普通用户用户,有限的允许访问")
+            logger.info(f"{request.user.username}-普通用户用户,有限的访问")
             res = FrontUserBase.objects.filter(id=request.user.id).first()
-            if res.call_count < 5:
+            if res.call_count < 100:
                 logger.info(res.call_count)
                 res.call_count+=1
                 res.save()

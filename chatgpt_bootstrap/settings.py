@@ -37,6 +37,10 @@ else:
 ALLOWED_HOSTS = ['*']
 
 
+CSRF_TRUSTED_ORIGINS = ['http://54.165.238.232']
+# 54.165.238.232
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -68,6 +72,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'None'
+
 ROOT_URLCONF = 'chatgpt_bootstrap.urls'
 
 TEMPLATES = [
@@ -88,7 +94,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'chatgpt_bootstrap.wsgi.application'
 
-
+APPEND_SLASH = False
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -134,8 +140,8 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
-
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static", "template"),
 ]
@@ -211,7 +217,7 @@ REST_FRAMEWORK = {
 
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '20/min',    # 匿名用户或未登录用户每分钟所有接口总计访问次数
+        'anon': '10/min',    # 匿名用户或未登录用户每分钟所有接口总计访问次数
         'user': '50/min'    # 登录认证用户 每分钟所有接口总计访问次数
     },
     'EXCEPTION_HANDLER': 'utils.exception.Custom_exception_handler'  # 自定义的异常处理

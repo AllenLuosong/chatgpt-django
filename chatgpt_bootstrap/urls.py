@@ -20,6 +20,9 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 from django.conf import settings
+from django.conf.urls.static import static
+
+
 schema_view = get_schema_view(
     openapi.Info(
         title="Chatgpt test  API",
@@ -35,13 +38,15 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("user/", include("chatgpt_user.urls")),
     path("chat_message/", include("chatgpt_chat.urls")),
-    path("chat_image/", include("chatgpt_image.urls")),
+    path("ai-image/", include("chatgpt_image.urls")),
+    path("file/", include("chatgpt_image.urls")),
+    path("auth/", include("chatgpt_user.urls"))
 
-]
+]+ static(settings.STATIC_URL,document_root = settings.STATIC_ROOT)
 
 if settings.DEBUG:  # prod环境不提供swagger服务
     urlpatterns += [
     re_path(r"^swagger(?P<format>\.json|\.yaml)$", schema_view.without_ui(cache_timeout=0), name="schema-json",),
-    path("",schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui",),
+    path("swagger/",schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui",),
     path(r"redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc",),
     ]
