@@ -11,15 +11,16 @@ Version          : 1.0
 
 from django.urls import path
 from chatgpt_image.views import Image, FileViewSet
-from rest_framework import routers
 from utils.router_url import StandardRouter
 
 system_url = StandardRouter()
 system_url.register(r'upload', FileViewSet)
 
 urlpatterns = [
-    path("generation", Image.as_view({"post": "create"})),
+    path("list", Image.as_view({"get": "images_list"})),
+    path("generation", Image.as_view({"post": "generate_uuid"})),
     path("edit", Image.as_view({"post": "edit"})),
     path("variation", Image.as_view({"post": "variation"})),
+    path("detail/<slug:uuid>", Image.as_view({"get": "image_detail"})),
 
 ] + system_url.urls

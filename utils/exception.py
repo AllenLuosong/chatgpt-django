@@ -10,6 +10,7 @@ Version          : 1.0
 
 from rest_framework.exceptions import PermissionDenied, AuthenticationFailed, NotAuthenticated
 from utils.json_response import ErrorResponse
+from loguru import logger
 
 def Custom_exception_handler(ex, context):
   """自定义异常处理
@@ -32,5 +33,5 @@ def Custom_exception_handler(ex, context):
   elif isinstance(ex, BaseException):
       msg = str(ex)
 
-  return ErrorResponse(msg=msg, code=code)
+  return ErrorResponse(msg=msg, code=code, status=code)
 

@@ -264,15 +264,7 @@ class LoginViewSet(CustomModelViewSet):
         }
         logger.success(f"{username}登录成功")
         return DetailResponse(data=result)
-        # res = {
-        #     "code": "A1000", 
-        #     "data": {
-        #       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjk0NDc4MTk3LCJpYXQiOjE2OTQzNDg1OTcsImp0aSI6IjlmMDIxMjhmOGVjODRkNmI5YjI2NzY4MDU1MWZmZmEwIiwidXNlcl9pZCI6MTAwMDAxLCJpZCI6MTAwMDAxfQ.2wnfmwcMotkrsOfXzpt1rL0EMxb37w16MDpnNzDcbPQ"
-        #       },
-        #      "message": "sucess",
-        #      "success": "true"
-        #       }
-        # return Response(res)
+
 
 class UserInfoViewSet(CustomModelViewSet):
     serializer_class = UserInfoSerializer
@@ -291,4 +283,5 @@ class UserInfoViewSet(CustomModelViewSet):
                 "avatarUrl": res.avatar_version
         }
         return DetailResponse(data=result)
+
 

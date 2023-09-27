@@ -18,6 +18,8 @@ class CustomModelSerializer(DynamicFieldsMixin, ModelSerializer):
     增强DRF的ModelSerializer
     (1)self.request能获取到rest_framework.request.Request对象
     """
+    modifier_field_id = "modifier"
+
     def __init__(self, instance=None, data=empty, request=None, **kwargs):
         super().__init__(instance, data, **kwargs)
         self.request: Request = request or self.context.get("request", None)
@@ -30,16 +32,6 @@ class CustomModelSerializer(DynamicFieldsMixin, ModelSerializer):
             if str(self.request.user) != "AnonymousUser":
                 if self.modifier_field_id in self.fields.fields:
                     validated_data[self.modifier_field_id] = self.get_request_user_id()
-                if self.creator_field_id in self.fields.fields:
-                    validated_data[self.creator_field_id] = self.request.user
-
-                if (
-                    self.dept_belong_id_field_name in self.fields.fields
-                    and validated_data.get(self.dept_belong_id_field_name, None) is None
-                ):
-                    validated_data[self.dept_belong_id_field_name] = getattr(
-                        self.request.user, "dept_id", None
-                    )
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
