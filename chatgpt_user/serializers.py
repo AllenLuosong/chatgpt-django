@@ -9,7 +9,7 @@ Version          : 1.0
 '''
 
 
-from chatgpt_user.models import FrontUserExtraEmail, FrontUserBase
+from chatgpt_user.models import FrontUserExtraEmail, FrontUserBase, EmailVerifyCode
 from utils.serializers import CustomModelSerializer
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -61,6 +61,14 @@ class LoginSerializer(TokenObtainPairSerializer):
         fields = ["username", "password"]
         read_only_fields = ["id"]
 
+class EmailVerifyCodeSerializer(CustomModelSerializer):
+    """ 密码重置序列化器
+    """
+    to_email_address = serializers.CharField(required=True)
+
+    class Meta:
+        model = EmailVerifyCode
+        fields = "__all__"
 
 
 class CustomerTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -71,7 +79,18 @@ class CustomerTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 class UserInfoSerializer(CustomModelSerializer):
-    
+
+
     class Meta:
-        model = FrontUserExtraEmail
-        fields = "__all__"
+        model = FrontUserBase
+        fields = ("id", "username",  "nickname", "description", "avatar_version",)
+      
+
+class ResetPasswordSerializer(CustomModelSerializer):
+    username = to_email_address = serializers.CharField(required=True)
+    newPassword = password =  serializers.CharField(required=True)
+    emailVerficationCode = serializers.CharField(required=True)
+
+    class Meta:
+        model = FrontUserBase
+        fields = ("id", "username", "password", "newPassword", "to_email_address", "emailVerficationCode", )

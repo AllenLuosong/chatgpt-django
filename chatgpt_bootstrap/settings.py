@@ -192,7 +192,7 @@ EMAIL_TIMEOUT = 10
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
 VERIFICATION_REDIRECT_URL = 'http://wiki.hichat.shop/#/emailValidation?type=email&verifyCode='
-EMAIL_SUBJECT = 'AI-Chat 注册'
+EMAIL_SUBJECT = 'AI-Chat 验证'
 
 # ================================================= #
 # **************** 日志配置  ******************* #
@@ -230,7 +230,7 @@ REST_FRAMEWORK = {
 # **************** Simple JWT配置     ************* #
 # ================================================= #
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=30), # access token的时效
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=3), # access token的时效
 }
 
 

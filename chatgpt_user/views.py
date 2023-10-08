@@ -9,7 +9,13 @@ Version          : 1.0
 '''
 
 
-from chatgpt_user.serializers import LoginSerializer, RegisterDetailSerializer, UserInfoSerializer, CustomerTokenObtainPairSerializer
+from chatgpt_user.serializers import (
+    LoginSerializer,
+    RegisterDetailSerializer,
+    UserInfoSerializer,
+    ResetPasswordSerializer,
+    EmailVerifyCodeSerializer
+)
 from utils.viewset import CustomModelViewSet
 from utils.json_response import DetailResponse, ErrorResponse
 from .models import FrontUserExtraEmail, CustomerCaptchaStore, EmailVerifyCode, FrontUserBase
@@ -35,8 +41,7 @@ import jwt
 from rest_framework.permissions import AllowAny
 from rest_framework import permissions
 from apscheduler.schedulers.background import BackgroundScheduler
-from django_apscheduler.jobstores import DjangoJobStore, register_events, register_job
-from rest_framework.response import Response
+from django_apscheduler.jobstores import DjangoJobStore, register_job
 
 #开启定时工作
 try:
@@ -54,12 +59,12 @@ try:
 except Exception as e:
     logger.error(f"定时任务异常-{e}")
 
-def send_verification_email(request, to_email, verify_code,verify_ip, expire_at, verificationUrl):
+def send_verification_email(request, to_email, verify_code,verify_ip, expire_at, template='register_verify_email.html', verificationUrl=None):
     """ 邮件发送方法 
     """
     subject = settings.EMAIL_SUBJECT
     # 使用render_to_string函数将register_verify_email.html渲染为HTML内容
-    html_content = render_to_string('register_verify_email.html', {'verificationUrl': verificationUrl})
+    html_content = render_to_string(template, {'verificationUrl': verificationUrl})
     # 创建EmailMessage对象，并设置相关属性
     email = EmailMessage(
         subject=subject,
@@ -104,7 +109,7 @@ class RegisterModelViewSet(CustomModelViewSet):
     retrieve:单例
     destroy:删除
     """
-    serializer_class = RegisterDetailSerializer
+    serializer_class = [RegisterDetailSerializer, ]
 
     @swagger_auto_schema(method='post', 
         request_body=openapi.Schema(
@@ -163,7 +168,8 @@ class RegisterModelViewSet(CustomModelViewSet):
         verificationUrl = settings.VERIFICATION_REDIRECT_URL + verify_code
         expire_at = timezone.now() + datetime.timedelta(minutes=int(settings.EMAIL_TIMEOUT))
         verify_ip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
-        send_verification_email(request, username, verify_code, verify_ip, expire_at, verificationUrl)
+        template = 'register_verify_email.html'
+        send_verification_email(request, username, verify_code, verify_ip, expire_at, template, verificationUrl)
         return DetailResponse(data={})
 
 
@@ -187,8 +193,67 @@ class RegisterModelViewSet(CustomModelViewSet):
         is_valid = check_password(password, salted_password)
         return is_valid
 
+class ResetPassword(CustomModelViewSet):
+    serializer_class = ResetPasswordSerializer
+    permission_classes = [permissions.IsAuthenticated, ]
+
+    def reset_password(self, request):
+        """ 密码重置方法
+        """
+        username=request.user.username
+        FrontUserBaseInstance = FrontUserBase.objects.filter(username=username).first()
+        serializer = ResetPasswordSerializer(data= request.data)
+        if serializer.is_valid(raise_exception=True):
+          req_data = serializer.validated_data
+          salt = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(6))
+          encode_password = make_password(req_data['password'], salt)
+          serializer.update(instance=FrontUserBaseInstance, validated_data={"password": encode_password, "salt": salt})
+          return DetailResponse(msg="密码重置成功")
+
+class ResetPasswordNotLogin(CustomModelViewSet):
+    serializer_class = ResetPasswordSerializer
+    permission_classes = [AllowAny, ]
+
+    def reset_password_not_login(self, request):
+        """ 密码重置方法
+        """
+        serializer = ResetPasswordSerializer(data= request.data)
+        if serializer.is_valid(raise_exception=True):
+          username=request.data['to_email_address']
+          FrontUserBaseInstance = FrontUserBase.objects.filter(username=username).first()   
+          if not FrontUserBaseInstance:
+            return ErrorResponse(msg="邮箱不存在,请确认")
+
+          req_data = serializer.validated_data
+          logger.info(req_data)
+          emailVerficationCode = req_data['emailVerficationCode']
+          verify_status = EmailVerifyCode.objects.filter(to_email_address=username, verify_code=emailVerficationCode, expire_at__gt=timezone.now()).first()
+          if not verify_status:
+            return ErrorResponse(msg="邮箱验证码错误,请检查")
+
+          picVerificationCode = request.data.get('picVerificationCode',None)
+          if not picVerificationCode:
+              return ErrorResponse(msg="验证码不能为空")
+          picCodeSessionId = request.data.get('picCodeSessionId',None)
+          try:
+            self.image_code = CustomerCaptchaStore.objects.filter(pic_code_seesion_id=picCodeSessionId).first()
+            self._expiration = CustomerCaptchaStore.objects.get(pic_code_seesion_id=picCodeSessionId).expiration
+            if  timezone.now()  > self._expiration:  # 先判断是否过期
+              return ErrorResponse(msg="验证码过期,请刷新重试") 
+            elif  self.image_code and (self.image_code.response == picVerificationCode or self.image_code.challenge == picVerificationCode):
+                self.image_code.delete() # 验证通过将数据库存储的验证码删除
+            else:
+                return ErrorResponse(msg="验证码错误,请输入正确的验证码")
+          except:
+                return ErrorResponse(msg="验证码错误,请刷新重试")
+       
+          salt = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(6))
+          encode_password = make_password(req_data['password'], salt)
+          serializer.update(instance=FrontUserBaseInstance, validated_data={"password": encode_password, "salt": salt})
+          return DetailResponse(msg="密码重置成功")
+
 class verifyEmailCodeViewSet(CustomModelViewSet):
-    """ 校验邮件验证码方法
+    """ 注册校验邮件验证码方法
     """
     serializer_class = UserInfoSerializer
 
@@ -218,6 +283,29 @@ class verifyEmailCodeViewSet(CustomModelViewSet):
           return DetailResponse(msg)
       else:
           return ErrorResponse(msg='验证码过期或不存在,请重新注册')
+
+class verifyResetPasswordEmailCodeViewSet(CustomModelViewSet):
+    """ 密码重置校验邮件验证码方法
+    """
+    serializer_class = EmailVerifyCodeSerializer
+    permission_classes = (AllowAny,)
+
+    def send(self, request, *args, **kwargs):
+        serializer = EmailVerifyCodeSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+          verify_code = ''.join(random.choice(string.digits) for _ in range(6))
+          req_data = serializer.validated_data
+          logger.info(req_data)
+          to_email_address = req_data['to_email_address']
+          if not FrontUserBase.objects.filter(username=to_email_address).first():
+              return ErrorResponse(msg="该邮箱未注册,请检查或发起注册")
+          
+          expire_at = timezone.now() + datetime.timedelta(minutes=int(settings.EMAIL_TIMEOUT))
+          verify_ip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
+          serializer.save(to_email_address=to_email_address, verify_code=verify_code, verify_ip=verify_ip, expire_at=expire_at, biz_type=11)
+          template = 'reset_password_verify_email.html'
+          # send_verification_email(request, to_email_address, verify_code, verify_ip, expire_at, template, verificationUrl=verify_code)
+          return DetailResponse()
 
 
 class CustomTokenGenerator(PasswordResetTokenGenerator):

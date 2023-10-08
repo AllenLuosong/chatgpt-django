@@ -52,13 +52,14 @@ class Image(CustomModelViewSet):
     def image_detail(self, request, uuid):
         """ 获取图片url
         """
-        serializer = ImageMessageSend(data=request.data)
-
+        imagemessage = ImageMessage.objects.filter(uuid=uuid).first()
+        serializer = ImageMessageSend(imagemessage)
+        logger.debug(serializer.data)
         generation_response = openai.Image.create(
             prompt=serializer.data['prompt'],
             n=serializer.data['number'],
             size=serializer.data['size']
-        )
+          )
 
         logger.info(generation_response)
         url_list = [url["url"] for url in  generation_response["data"] ]

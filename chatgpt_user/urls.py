@@ -9,7 +9,17 @@ Version          : 1.0
 '''
 
 from django.urls import path
-from chatgpt_user.views import RegisterModelViewSet, verifyEmailCodeViewSet, CaptchaView, LoginViewSet, UserInfoViewSet
+from chatgpt_user.views import (
+    RegisterModelViewSet, 
+    verifyEmailCodeViewSet, 
+    CaptchaView, 
+    LoginViewSet, 
+    UserInfoViewSet, 
+    ResetPassword,
+    verifyResetPasswordEmailCodeViewSet,
+    ResetPasswordNotLogin
+)
+
 from rest_framework_simplejwt.views import TokenRefreshView
 
 
@@ -21,6 +31,8 @@ urlpatterns = [
     path("info", UserInfoViewSet.as_view({"get": "list"})),
     # path('token', ObtainTokenPairViewSet.as_view(), name='token_obtain_pair'),
     path('token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
-    path("login", LoginViewSet.as_view({"post": "create"}))
-
+    path("login", LoginViewSet.as_view({"post": "create"})),
+    path("password/modify", ResetPassword.as_view({"post": "reset_password"})),
+    path("password/reset/verify_email_code", verifyResetPasswordEmailCodeViewSet.as_view({"post": "send"})),
+    path("password/reset", ResetPasswordNotLogin.as_view({"post": "reset_password_not_login"})),
 ]

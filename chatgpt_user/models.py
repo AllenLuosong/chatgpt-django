@@ -34,14 +34,14 @@ class EmailVerifyCode(models.Model):
     
     BIZ_TYPE_CHOICES = (
         (10, _('注册认证')),
-        (11, _('找回密码认证')),
+        (11, _('密码重置认证')),
     )
     id = models.AutoField(primary_key=True)
     to_email_address = models.EmailField(max_length=64, verbose_name="验证码接收邮箱", null=True, blank=True, help_text="验证码接收邮箱")
     verify_code = models.CharField(max_length=64, verbose_name="邮箱验证码", null=True, blank=True, help_text="邮箱验证码")
     verify_ip = models.CharField(max_length=128, verbose_name="验证IP", null=True, blank=True, help_text="验证IP")
     expire_at = models.DateTimeField(verbose_name="验证码过期时间", null=True, blank=True, help_text="验证码过期时间")
-    biz_type = models.IntegerField(verbose_name="验证码过期时间", choices=BIZ_TYPE_CHOICES, default=10, help_text="注册认证")
+    biz_type = models.IntegerField(verbose_name="验证码类型", choices=BIZ_TYPE_CHOICES, default=10, help_text="验证码类型")
     update_datetime = models.DateTimeField(auto_now=True, null=True, blank=True, help_text="修改时间", verbose_name="修改时间")
     create_datetime = models.DateTimeField(auto_now_add=True, null=True, blank=True, help_text="创建时间", verbose_name="创建时间")
 
@@ -78,6 +78,7 @@ class FrontUserBase(AbstractUser, models.Model):
         verbose_name = "用户基础信息表"
         verbose_name_plural = verbose_name
         ordering = ("-create_datetime",)
+
 
 
 class SysEmailSendLog(models.Model):
