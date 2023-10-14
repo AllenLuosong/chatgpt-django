@@ -163,7 +163,7 @@ class RegisterModelViewSet(CustomModelViewSet):
             msg = "该账号已注册,请登录"
             logger.warning(f"{username}-该账号已注册,请登录")
             return ErrorResponse(msg=msg)
-        # FrontUserExtraEmail.objects.create(username=username, password=self.set_password(password,salt), salt=salt).save()
+        FrontUserExtraEmail.objects.create(username=username, password=self.set_password(password,salt), salt=salt).save()
         verify_code = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(32))
         verificationUrl = settings.VERIFICATION_REDIRECT_URL + verify_code
         expire_at = timezone.now() + datetime.timedelta(minutes=int(settings.EMAIL_TIMEOUT))
@@ -304,7 +304,7 @@ class verifyResetPasswordEmailCodeViewSet(CustomModelViewSet):
           verify_ip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
           serializer.save(to_email_address=to_email_address, verify_code=verify_code, verify_ip=verify_ip, expire_at=expire_at, biz_type=11)
           template = 'reset_password_verify_email.html'
-          # send_verification_email(request, to_email_address, verify_code, verify_ip, expire_at, template, verificationUrl=verify_code)
+          send_verification_email(request, to_email_address, verify_code, verify_ip, expire_at, template, verificationUrl=verify_code)
           return DetailResponse()
 
 
@@ -371,5 +371,4 @@ class UserInfoViewSet(CustomModelViewSet):
                 "avatarUrl": res.avatar_version
         }
         return DetailResponse(data=result)
-
 

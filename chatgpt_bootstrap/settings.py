@@ -93,7 +93,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'chatgpt_bootstrap.wsgi.application'
+WSGI_APPLICATION = 'chatgpt_bootstrap.wsgi.app'
 
 APPEND_SLASH = False
 # Database
