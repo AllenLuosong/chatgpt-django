@@ -38,7 +38,7 @@ class Chat(CustomModelViewSet):
                     {"role": "system", "content": "You are a helpful assistant."},
                     {"role": "user", "content": prompt}
                 ],
-                request_timeout = 30,
+                request_timeout = 45,
             )
             logger.info(f"completion-{completion}")
 
