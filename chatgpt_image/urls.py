@@ -16,6 +16,7 @@ from utils.router_url import StandardRouter
 system_url = StandardRouter()
 system_url.register(r'upload', FileViewSet)
 
+
 urlpatterns = [
     path("list", Image.as_view({"get": "images_list"})),
     path("generation", Image.as_view({"post": "generate_uuid"})),

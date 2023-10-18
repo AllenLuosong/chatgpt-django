@@ -50,7 +50,8 @@ class FileSerializer(CustomModelSerializer):
 
     def get_url(self, instance):
         # 获取本地保存路径
-        return str(instance.url)
+        req_url = str(instance.url).replace('/template', '')
+        return req_url
 
     class Meta:
         model = FileList

@@ -25,7 +25,8 @@ class ImageMessage(models.Model):
 def media_file_name(instance, filename):
     h = instance.md5sum
     basename, ext = os.path.splitext(filename)
-    return os.path.join("files", h[0:1], h[1:2], h + ext.lower())
+    # 创建文件保存
+    return os.path.join("static", "template", "files", h[0:1], h[1:2], h + ext.lower())
 
 
 class FileList(models.Model):

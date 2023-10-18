@@ -103,7 +103,7 @@ class Image(CustomModelViewSet):
             logger.debug(image_response)
             return DetailResponse(data=image_response)
         except BaseException as e:
-            msg = "请求失败,请稍后再试"
+            msg = "请求失败,请稍后再试,后台返回:{e}"
             logger.error(f'{msg}-后台返回-{e}')
             return ErrorResponse(code=500, data={}, msg=msg)
 
@@ -116,13 +116,29 @@ class Image(CustomModelViewSet):
             BASE_DIR, request.data["originalImage"])
         try:
             logger.debug(originalImage_path)
-            image_response = openai.Image.create_variation(
-                image=open(originalImage_path, "rb"),
-                n=n,
-                size=size
-            )
-            logger.debug(image_response)
-            return DetailResponse(data=image_response)
+            # image_response = openai.Image.create_variation(
+            #     image=open(originalImage_path, "rb"),
+            #     n=n,
+            #     size=size
+            # )
+            image_response = {
+              "created": 1697281106,
+              "data": [
+                {
+                  "url": "https://wiki.hichat.shop/assets/avatar-dd2fb972.jpg"
+                }
+              ]
+            }
+            result = {
+            "createTime": 1697281106,
+            "imageUrlList": image_response['data'],
+            "originalImageUrl": 'http://localhost:3002/static/files/d/7/d72781743a4f07ca5534470652ad8a28.png',
+            "uuid": str(uuid.uuid4()).replace("-", ""),
+            "interactingMethod": 3
+            }
+            logger.debug(result)
+            return DetailResponse(data=result)
+
         except BaseException as e:
             msg = "请求失败,请稍后再试"
             logger.error(f'{msg}-后台返回-{e}')
