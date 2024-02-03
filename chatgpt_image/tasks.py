@@ -14,6 +14,7 @@ import requests
 from chatgpt_image.models import ImageMessage
 from chatgpt_image.serializers import UpdateImageMessageSend
 from django.http import Http404
+from django.conf import settings
 
 
 superbed_token = settings.SUPERBED_TOKEN
@@ -26,7 +27,7 @@ def get_object(uuid):
 
 @shared_task
 def put_openai_image_to_superbed(uuid, url_list):
-    image_uplod_url = "https://api.superbed.cn/upload"
+    image_uplod_url = settings.SUPERBED_URL
     resp = {}
     # openai的原始图片上传到图床
     for openai_res_image_url in url_list:

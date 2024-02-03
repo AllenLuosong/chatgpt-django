@@ -11,6 +11,7 @@ Version          : 1.0
 from django.http import StreamingHttpResponse
 from utils.viewset import CustomModelViewSet
 from chatgpt_chat.serializers import ChatMessageSend
+from chatgpt_config.serializers import UserConfigserializer
 import uuid
 import json
 import time
@@ -20,20 +21,36 @@ import openai
 from rest_framework import permissions
 from utils.json_response import ErrorResponse
 from utils.permisson import LimitedAccessPermission
+from chatgpt_config.models import Config, UserConfig
 
 class Chat(CustomModelViewSet):
     serializer_class = ChatMessageSend
     permission_classes = [permissions.IsAuthenticated, LimitedAccessPermission] # 登录授权才可以访问接口
-    openai.api_key = settings.OPENAI_API_KEY
-    openai.api_base = settings.OPENAI_API_BASE_URL
-    openai_model = settings.MODEL
+
 
     def create(self, request):
+        baseUserId = request.user.id
+        user_config = UserConfig.objects.filter(baseUserId=baseUserId)
+        serializer = UserConfigserializer(user_config.first())
+        logger.info(serializer.data)
+        if serializer.data.get('secretKey', 'None'):
+          openai.api_key = serializer.data.get('secretKey', 'None')
+          openai.api_base = serializer.data.get('proxyAdress', 'None')
+          openai_model = serializer.data.get('chatModel', 'None')
+        else:
+          openai_chat_api_3_5_config_dict = {}
+          openai_chat_api_3_5_config = Config.objects.filter(config_Code='openai_chat_api_3_5')
+          for i in openai_chat_api_3_5_config:
+            openai_chat_api_3_5_config_dict.update({i.key: i.value})
+          openai.api_key = openai_chat_api_3_5_config_dict.get("OPENAI_API_KEY", 'None')
+          openai.api_base = openai_chat_api_3_5_config_dict.get("OPENAI_API_BASE_URL", 'None')
+          openai_model = openai_chat_api_3_5_config_dict.get("model", 'None')
+
         prompt = request.data["prompt"]
         logger.info(f"prompt-{prompt}")
         try:
             completion = openai.ChatCompletion.create(
-                model=self.openai_model,
+                model= openai_model,
                 messages=[
                     {"role": "system", "content": "You are a helpful assistant."},
                     {"role": "user", "content": prompt}
@@ -43,6 +60,7 @@ class Chat(CustomModelViewSet):
             logger.info(f"completion-{completion}")
 
             chat_text = completion.choices[0].message.content
+            # chat_text = "你好"
             def generate_streaming_text(text=chat_text):
                 # 流媒体文本处理方法
                 id = str(uuid.uuid4())

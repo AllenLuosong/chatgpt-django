@@ -58,7 +58,9 @@ INSTALLED_APPS = [
     'chatgpt_chat',
     'chatgpt_image',
     'django_apscheduler',
+    'chatgpt_config',
     'django_celery_results',
+    'chatgpt_usage',
 ]
 
 DCM_COMMENT_APP=['app']
@@ -246,6 +248,7 @@ MODEL = os.environ.get("MODEL")
 # ****************  聚合图床配置  ****************** #
 # ================================================= #
 SUPERBED_TOKEN = os.environ.get("SUPERBED_TOKEN")
+SUPERBED_URL = os.environ.get("SUPERBED_URL")
 
 # ================================================= #
 # **************** 缓冲文件数据配置  **************** #

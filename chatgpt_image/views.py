@@ -25,14 +25,15 @@ from chatgpt_bootstrap.settings import BASE_DIR
 import uuid
 import datetime
 from chatgpt_image.tasks import put_openai_image_to_superbed
-
+from chatgpt_config.models import UserConfig, Config
+from chatgpt_config.serializers import UserConfigserializer
 
 class Image(CustomModelViewSet):
     serializer_class = ImageMessageSend
     permission_classes = [permissions.IsAuthenticated, LimitedAccessPermission]
-    openai.api_key = settings.OPENAI_API_KEY
-    openai.api_base = settings.OPENAI_API_BASE_URL
-    superbed_token = settings.SUPERBED_TOKEN
+    # openai.api_key = settings.OPENAI_API_KEY
+    # openai.api_base = settings.OPENAI_API_BASE_URL
+    # superbed_token = settings.SUPERBED_TOKEN
 
 
     def generate_uuid(self, request):
@@ -55,15 +56,34 @@ class Image(CustomModelViewSet):
         imagemessage = ImageMessage.objects.filter(uuid=uuid).first()
         serializer = ImageMessageSend(imagemessage)
         logger.debug(serializer.data)
+
+        baseUserId = request.user.id
+        user_config = UserConfig.objects.filter(baseUserId=baseUserId)
+        if user_config:
+          user_config_serializer = UserConfigserializer(user_config.first())
+          openai.api_key = user_config_serializer.data.get('secretKey', 'None')
+          openai.api_base = user_config_serializer.data.get('proxyAdress', 'None')
+          drawvalue = user_config_serializer.data.get('drawvalue', 'None')
+        else:
+          openai_chat_api_3_5_config_dict = {}
+          openai_chat_api_3_5_config = Config.objects.filter(config_Code='openai_chat_api_3_5')
+          for i in openai_chat_api_3_5_config:
+            openai_chat_api_3_5_config_dict.update({i.key: i.value})
+          openai.api_key = openai_chat_api_3_5_config_dict.get("OPENAI_API_KEY", 'None')
+          openai.api_base = openai_chat_api_3_5_config_dict.get("OPENAI_API_BASE_URL", 'None')
+          drawvalue = openai_chat_api_3_5_config_dict.get("drawvalue", 'None')
+
         generation_response = openai.Image.create(
+            model=drawvalue,
             prompt=serializer.data['prompt'],
             n=serializer.data['number'],
             size=serializer.data['size']
           )
 
         logger.info(generation_response)
-        url_list = [url["url"] for url in  generation_response["data"] ]
-        put_openai_image_to_superbed.delay(uuid, url_list)
+        # 将图片资源另存到在线图床
+        # url_list = [url["url"] for url in  generation_response["data"] ]
+        # put_openai_image_to_superbed.delay(uuid, url_list) 
 
         dt_object = datetime.datetime.fromtimestamp(
             generation_response['created'])

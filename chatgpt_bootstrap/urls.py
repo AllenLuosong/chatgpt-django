@@ -39,6 +39,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("user/", include("chatgpt_user.urls")),
     path("chat_message/", include("chatgpt_chat.urls")),
+    path("config/", include("chatgpt_config.urls")),
+    path("dashboard/", include("chatgpt_usage.urls")),
     path("ai-image/", include("chatgpt_image.urls")),
     path("file/", include("chatgpt_image.urls")),
 
