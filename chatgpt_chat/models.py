@@ -7,9 +7,15 @@ class ChatMessage(models.Model):
     
 
     id = models.AutoField(primary_key=True)
-    username = models.EmailField(max_length=64, verbose_name="用户名", null=True, blank=True, help_text="用户名")
+    baseUserId = models.IntegerField(verbose_name="用户名", null=True, blank=True, help_text="用户名")
+    prompt = models.TextField(verbose_name="提示语", null=True, blank=True, help_text="提示语")
+    completion = models.TextField(verbose_name="回复词", null=True, blank=True, help_text="回复词")
+    prompt_tokens = models.IntegerField(verbose_name="提示语消耗tokens",null=True, blank=True, help_text="提示语消耗tokens")
+    total_tokens = models.IntegerField(verbose_name="总共消耗tokens", blank=True, help_text="总共消耗tokens")
+    completion_tokens = models.IntegerField(verbose_name="回复词消耗tokens", blank=True, null=True, help_text="回复词消耗tokens")
     update_datetime = models.DateTimeField(auto_now=True, null=True, blank=True, help_text="修改时间", verbose_name="修改时间")
     create_datetime = models.DateTimeField(auto_now_add=True, null=True, blank=True, help_text="创建时间", verbose_name="创建时间")
+    created = models.DateField(auto_now_add=True, null=True, blank=True, help_text="创建日期", verbose_name="创建日期")
 
     class Meta:
         db_table = "chat_message"

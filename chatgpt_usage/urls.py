@@ -14,4 +14,5 @@ from chatgpt_usage.views import Usage
 
 urlpatterns = [
     path("list", Usage.as_view({"get": "list"})),
+    path("userUsage", Usage.as_view({"get": "userUsage"})),
 ]

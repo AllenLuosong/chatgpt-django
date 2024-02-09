@@ -24,7 +24,7 @@ class ImageMessageSend(CustomModelSerializer):
     prompt = serializers.CharField(
         default="A cyberpunk monkey hacker dreaming of a beautiful bunch of bananas, digital art")
     username = serializers.CharField(required=False)
-    create_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)
+    # create_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)
 
     class Meta:
         model = ImageMessage

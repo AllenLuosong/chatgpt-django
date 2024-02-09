@@ -43,6 +43,7 @@ from rest_framework import permissions
 from apscheduler.schedulers.background import BackgroundScheduler
 from django_apscheduler.jobstores import DjangoJobStore, register_job
 
+
 #开启定时工作
 try:
     # 实例化调度器

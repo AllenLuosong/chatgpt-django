@@ -44,6 +44,7 @@ CSRF_TRUSTED_ORIGINS = ['http://54.165.238.232']
 # Application definition
 
 INSTALLED_APPS = [
+    'simpleui', # 管理后台
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -185,6 +186,10 @@ CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge' #字母验证�
 # ================================================= #
 # **************** 邮件配置  ******************* #
 # ================================================= #
+# Configquery = Config.objects.filter(config_Code='email_config')
+# logger.info(Configquery)
+
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.environ.get("EMAIL_HOST")
 EMAIL_PORT = os.environ.get("EMAIL_PORT")
@@ -221,7 +226,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_THROTTLE_RATES': {
         'anon': '10/min',    # 匿名用户或未登录用户每分钟所有接口总计访问次数
-        'user': '50/min'    # 登录认证用户 每分钟所有接口总计访问次数
+        'user': '50/min'    # 登录认证用户每分钟所有接口总计访问次数
     },
     'EXCEPTION_HANDLER': 'utils.exception.Custom_exception_handler'  # 自定义的异常处理
 }
@@ -240,13 +245,16 @@ SIMPLE_JWT = {
 # **************** open ai配置  ******************** #
 # ================================================= #
 
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
-OPENAI_API_BASE_URL = os.environ.get("OPENAI_API_BASE_URL")
-MODEL = os.environ.get("MODEL")
+"""
+原有配置项已移交至数据库中托管
+"""
 
 # ================================================= #
 # ****************  聚合图床配置  ****************** #
 # ================================================= #
+"""
+用于将chatgpt生成的图片转存到配置的图床中,暂未生效
+"""
 SUPERBED_TOKEN = os.environ.get("SUPERBED_TOKEN")
 SUPERBED_URL = os.environ.get("SUPERBED_URL")
 

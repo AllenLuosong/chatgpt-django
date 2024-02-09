@@ -31,10 +31,6 @@ from chatgpt_config.serializers import UserConfigserializer
 class Image(CustomModelViewSet):
     serializer_class = ImageMessageSend
     permission_classes = [permissions.IsAuthenticated, LimitedAccessPermission]
-    # openai.api_key = settings.OPENAI_API_KEY
-    # openai.api_base = settings.OPENAI_API_BASE_URL
-    # superbed_token = settings.SUPERBED_TOKEN
-
 
     def generate_uuid(self, request):
         """ 返回一个用于创建图片的uuid
@@ -55,12 +51,11 @@ class Image(CustomModelViewSet):
         """
         imagemessage = ImageMessage.objects.filter(uuid=uuid).first()
         serializer = ImageMessageSend(imagemessage)
-        logger.debug(serializer.data)
-
         baseUserId = request.user.id
         user_config = UserConfig.objects.filter(baseUserId=baseUserId)
-        if user_config:
-          user_config_serializer = UserConfigserializer(user_config.first())
+        user_config_serializer = UserConfigserializer(user_config.first())
+
+        if user_config_serializer.data.get('secretKey', 'None'):
           openai.api_key = user_config_serializer.data.get('secretKey', 'None')
           openai.api_base = user_config_serializer.data.get('proxyAdress', 'None')
           drawvalue = user_config_serializer.data.get('drawvalue', 'None')
@@ -71,8 +66,8 @@ class Image(CustomModelViewSet):
             openai_chat_api_3_5_config_dict.update({i.key: i.value})
           openai.api_key = openai_chat_api_3_5_config_dict.get("OPENAI_API_KEY", 'None')
           openai.api_base = openai_chat_api_3_5_config_dict.get("OPENAI_API_BASE_URL", 'None')
-          drawvalue = openai_chat_api_3_5_config_dict.get("drawvalue", 'None')
-
+          drawvalue = 'dall-e-2'
+          
         generation_response = openai.Image.create(
             model=drawvalue,
             prompt=serializer.data['prompt'],

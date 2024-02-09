@@ -15,7 +15,8 @@ class ImageMessage(models.Model):
     res_data = models.JSONField(verbose_name="返回的图片数据", null=True)
     update_datetime = models.DateTimeField(auto_now=True, null=True, blank=True, help_text="修改时间", verbose_name="修改时间")
     create_datetime = models.DateTimeField(auto_now_add=True, null=True, blank=True, help_text="创建时间", verbose_name="创建时间")
-
+    # created = models.DateField(auto_now_add=True, null=True, blank=True, help_text="创建日期", verbose_name="创建日期")
+    
     class Meta:
         db_table = "Image_message"
         verbose_name = "图片消息表"

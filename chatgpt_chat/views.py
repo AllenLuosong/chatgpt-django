@@ -10,7 +10,7 @@ Version          : 1.0
 
 from django.http import StreamingHttpResponse
 from utils.viewset import CustomModelViewSet
-from chatgpt_chat.serializers import ChatMessageSend
+from chatgpt_chat.serializers import ChatMessageSerializers
 from chatgpt_config.serializers import UserConfigserializer
 import uuid
 import json
@@ -22,9 +22,10 @@ from rest_framework import permissions
 from utils.json_response import ErrorResponse
 from utils.permisson import LimitedAccessPermission
 from chatgpt_config.models import Config, UserConfig
+import json
 
 class Chat(CustomModelViewSet):
-    serializer_class = ChatMessageSend
+    serializer_class = ChatMessageSerializers
     permission_classes = [permissions.IsAuthenticated, LimitedAccessPermission] # 登录授权才可以访问接口
 
 
@@ -47,7 +48,9 @@ class Chat(CustomModelViewSet):
           openai_model = openai_chat_api_3_5_config_dict.get("model", 'None')
 
         prompt = request.data["prompt"]
-        logger.info(f"prompt-{prompt}")
+        serializer = ChatMessageSerializers(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+           logger.info(serializer.validated_data)
         try:
             completion = openai.ChatCompletion.create(
                 model= openai_model,
@@ -58,9 +61,12 @@ class Chat(CustomModelViewSet):
                 request_timeout = 45,
             )
             logger.info(f"completion-{completion}")
-
             chat_text = completion.choices[0].message.content
-            # chat_text = "你好"
+            prompt_tokens = completion.usage.prompt_tokens
+            completion_tokens = completion.usage.completion_tokens
+            total_tokens = completion.usage.total_tokens
+            serializer.save(prompt=prompt,baseUserId=request.user.id,completion=completion,
+                prompt_tokens=prompt_tokens,completion_tokens=completion_tokens,total_tokens=total_tokens)
             def generate_streaming_text(text=chat_text):
                 # 流媒体文本处理方法
                 id = str(uuid.uuid4())

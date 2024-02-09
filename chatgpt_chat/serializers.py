@@ -13,12 +13,16 @@ from rest_framework import serializers
 from chatgpt_chat.models import ChatMessage
 
 
-class ChatMessageSend(CustomModelSerializer):
+class ChatMessageSerializers(serializers.ModelSerializer):
     """
     序列化器
     """
-    code = serializers.CharField()
-    message = serializers.CharField()
+    baseUserId = serializers.IntegerField(required=False)
+    prompt = serializers.CharField()
+    completion = serializers.CharField(allow_blank=True, required=False)
+    prompt_tokens = serializers.IntegerField(required=False)
+    total_tokens = serializers.IntegerField(required=False)
+    completion_tokens = serializers.IntegerField(required=False)
 
     class Meta:
         model = ChatMessage
