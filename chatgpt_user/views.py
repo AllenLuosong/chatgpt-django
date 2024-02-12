@@ -164,7 +164,7 @@ class RegisterModelViewSet(CustomModelViewSet):
             msg = "该账号已注册,请登录"
             logger.warning(f"{username}-该账号已注册,请登录")
             return ErrorResponse(msg=msg)
-        FrontUserExtraEmail.objects.create(username=username, password=self.set_password(password,salt), salt=salt).save()
+        # FrontUserExtraEmail.objects.create(username=username, password=self.set_password(password,salt), salt=salt).save()
         verify_code = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(32))
         verificationUrl = settings.VERIFICATION_REDIRECT_URL + verify_code
         expire_at = timezone.now() + datetime.timedelta(minutes=int(settings.EMAIL_TIMEOUT))

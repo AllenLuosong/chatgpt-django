@@ -186,20 +186,25 @@ CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge' #字母验证�
 # ================================================= #
 # **************** 邮件配置  ******************* #
 # ================================================= #
-# Configquery = Config.objects.filter(config_Code='email_config')
-# logger.info(Configquery)
+import sqlite3
+conn = sqlite3.connect('./db.sqlite3')
+c = conn.cursor()
+cursor = c.execute("SELECT config_Code, key, value from chatgpt_config")
+email_config_dict = {}
+for row in cursor:
+  if row[0]=='email_config':
+    email_config_dict.update({row[1]:row[2]})
 
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.environ.get("EMAIL_HOST")
-EMAIL_PORT = os.environ.get("EMAIL_PORT")
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+EMAIL_BACKEND = email_config_dict['EMAIL_BACKEND']
+EMAIL_HOST = email_config_dict['EMAIL_HOST']
+EMAIL_PORT = email_config_dict['EMAIL_PORT']
+EMAIL_HOST_USER = email_config_dict['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = email_config_dict['EMAIL_HOST_PASSWORD']
 EMAIL_TIMEOUT = 10
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
-VERIFICATION_REDIRECT_URL = 'http://wiki.hichat.shop/#/emailValidation?type=email&verifyCode='
-EMAIL_SUBJECT = 'AI-Chat 验证'
+DEFAULT_FROM_EMAIL = email_config_dict['DEFAULT_FROM_EMAIL']
+VERIFICATION_REDIRECT_URL = email_config_dict['VERIFICATION_REDIRECT_URL']
+EMAIL_SUBJECT = email_config_dict['EMAIL_SUBJECT']
 
 # ================================================= #
 # **************** 日志配置  ******************* #

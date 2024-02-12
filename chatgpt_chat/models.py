@@ -11,7 +11,7 @@ class ChatMessage(models.Model):
     prompt = models.TextField(verbose_name="提示语", null=True, blank=True, help_text="提示语")
     completion = models.TextField(verbose_name="回复词", null=True, blank=True, help_text="回复词")
     prompt_tokens = models.IntegerField(verbose_name="提示语消耗tokens",null=True, blank=True, help_text="提示语消耗tokens")
-    total_tokens = models.IntegerField(verbose_name="总共消耗tokens", blank=True, help_text="总共消耗tokens")
+    total_tokens = models.IntegerField(verbose_name="总共消耗tokens",null=True, blank=True, help_text="总共消耗tokens")
     completion_tokens = models.IntegerField(verbose_name="回复词消耗tokens", blank=True, null=True, help_text="回复词消耗tokens")
     update_datetime = models.DateTimeField(auto_now=True, null=True, blank=True, help_text="修改时间", verbose_name="修改时间")
     create_datetime = models.DateTimeField(auto_now_add=True, null=True, blank=True, help_text="创建时间", verbose_name="创建时间")

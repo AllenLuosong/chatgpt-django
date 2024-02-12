@@ -67,7 +67,6 @@ class Image(CustomModelViewSet):
           openai.api_key = openai_chat_api_3_5_config_dict.get("OPENAI_API_KEY", 'None')
           openai.api_base = openai_chat_api_3_5_config_dict.get("OPENAI_API_BASE_URL", 'None')
           drawvalue = 'dall-e-2'
-          
         generation_response = openai.Image.create(
             model=drawvalue,
             prompt=serializer.data['prompt'],

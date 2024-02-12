@@ -35,23 +35,20 @@
 
 
 ```shell
-# 克隆项目
-git clone https://github.com/AllenLuosong/chatgpt-django
+1. # 克隆项目
 
-# 进入项目
+2. # 进入项目
 cd chatgpt-django
 
-# 复制一份配置文件
-cp .env.example .env
-#  填充apikey apibaseurl,及注册邮箱配置
-vi .env 
+3. # 填写init.sql文件的配置项
+目前咱没有兜底 api key 请填写自己的api key
 
-# django数据库初始化
+4. # django数据库初始化
 python manage.py makemigrations
 
-# django数据库迁移同步
+5. # django数据库迁移同步
 python manage.py migrate
 
-# 使用docker-compose启动
+6. # 使用docker-compose启动
 docker-compose up -d 
 ```
