@@ -2,6 +2,10 @@ from django.contrib import admin
 from chatgpt_chat.models import ChatMessage
 # Register your models here.
 
+admin.site.site_header = 'chatgpt-django管理后台'  # 设置header
+admin.site.site_title = 'chatgpt-django管理后台'   # 设置title
+admin.site.index_title = 'chatgpt-django管理后台'
+
 class ChatMessageAdmin(admin.ModelAdmin):
     # 定制哪些字段需要展示
     list_display = ('baseUserId', 'prompt', 'completion', 'prompt_tokens', 'completion_tokens', 'total_tokens', 'create_datetime', 'update_datetime',)

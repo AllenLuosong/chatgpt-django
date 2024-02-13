@@ -65,7 +65,7 @@ class Chat(CustomModelViewSet):
             prompt_tokens = completion.usage.prompt_tokens
             completion_tokens = completion.usage.completion_tokens
             total_tokens = completion.usage.total_tokens
-            serializer.save(prompt=prompt,baseUserId=request.user.id,completion=completion,
+            serializer.save(prompt=prompt,baseUserId=request.user.id,completion=completion,chat_model=openai_model,
                 prompt_tokens=prompt_tokens,completion_tokens=completion_tokens,total_tokens=total_tokens)
             def generate_streaming_text(text=chat_text):
                 # 流媒体文本处理方法

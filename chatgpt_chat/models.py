@@ -10,6 +10,7 @@ class ChatMessage(models.Model):
     baseUserId = models.IntegerField(verbose_name="用户名", null=True, blank=True, help_text="用户名")
     prompt = models.TextField(verbose_name="提示语", null=True, blank=True, help_text="提示语")
     completion = models.TextField(verbose_name="回复词", null=True, blank=True, help_text="回复词")
+    chat_model = models.CharField(max_length=32, verbose_name="会话模型", null=True, blank=True, help_text="会话模型")
     prompt_tokens = models.IntegerField(verbose_name="提示语消耗tokens",null=True, blank=True, help_text="提示语消耗tokens")
     total_tokens = models.IntegerField(verbose_name="总共消耗tokens",null=True, blank=True, help_text="总共消耗tokens")
     completion_tokens = models.IntegerField(verbose_name="回复词消耗tokens", blank=True, null=True, help_text="回复词消耗tokens")

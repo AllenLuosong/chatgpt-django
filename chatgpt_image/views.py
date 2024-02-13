@@ -73,8 +73,9 @@ class Image(CustomModelViewSet):
             n=serializer.data['number'],
             size=serializer.data['size']
           )
-
         logger.info(generation_response)
+        validated_data = {'drawvalue': drawvalue}
+        serializer.update(imagemessage, validated_data)
         # 将图片资源另存到在线图床
         # url_list = [url["url"] for url in  generation_response["data"] ]
         # put_openai_image_to_superbed.delay(uuid, url_list) 

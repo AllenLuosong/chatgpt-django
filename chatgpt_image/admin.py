@@ -2,7 +2,6 @@ from django.contrib import admin
 from chatgpt_image.models import ImageMessage
 # Register your models here.
 
-
 class ImageMessageAdmin(admin.ModelAdmin):
     # 定制哪些字段需要展示
     list_display = ('username', 'uuid', 'prompt', 'size', 'number', 'res_data', 'create_datetime', 'update_datetime',)

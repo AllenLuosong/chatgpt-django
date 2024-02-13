@@ -23,7 +23,8 @@ class ChatMessageSerializers(serializers.ModelSerializer):
     prompt_tokens = serializers.IntegerField(required=False)
     total_tokens = serializers.IntegerField(required=False)
     completion_tokens = serializers.IntegerField(required=False)
-
+    chat_model = serializers.CharField(allow_blank=True, required=False)
+    
     class Meta:
         model = ChatMessage
         fields = "__all__"

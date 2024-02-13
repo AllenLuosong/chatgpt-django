@@ -1,11 +1,12 @@
 # chatgpt-django
 基于django搭建的chatgpt后台服务
 项目体验地址:  [网页Dmeo](https://wiki.hichat.shop/)
-体验账号/密码: demo1@123.com/demo1018
+体验账号/密码:  demo1@demo.com/demo20240209
 
 # ✨ 介绍
-基于的 [chatgpt-web](https://github.com/Chanzhaoyu/chatgpt-web) 二次开发，适配[后台 chatgpt-django](https://github.com/AllenLuosong/chatgpt-django)，后续版本开发会在此项目上更新上线新功能
+基于的 [chatgpt-web](https://github.com/Chanzhaoyu/chatgpt-web) 二次开发，适配[后台 chatgpt-django](https://github.com/old-eight800/chatgpt-django)，后续版本开发会在此项目上更新上线新功能
 
+配套的前端项目 [chatweb](https://github.com/old-eight800/chatweb)
 
 
 
