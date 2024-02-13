@@ -36,12 +36,12 @@
 
 ```shell
 1. # 克隆项目
-
+git clone https://github.com/old-eight800/chatgpt-django.git
 2. # 进入项目
 cd chatgpt-django
 
 3. # 填写init.sql文件的配置项
-目前咱没有兜底 api key 请填写自己的api key
+目前没有兜底api-key,请按要求填写自己的api-key
 
 4. # django数据库初始化
 python manage.py makemigrations
