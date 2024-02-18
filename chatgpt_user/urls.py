@@ -17,7 +17,8 @@ from chatgpt_user.views import (
     UserInfoViewSet, 
     ResetPassword,
     verifyResetPasswordEmailCodeViewSet,
-    ResetPasswordNotLogin
+    ResetPasswordNotLogin,
+    dashboard
 )
 
 from rest_framework_simplejwt.views import TokenRefreshView
@@ -35,4 +36,5 @@ urlpatterns = [
     path("password/modify", ResetPassword.as_view({"post": "reset_password"})),
     path("password/reset/verify_email_code", verifyResetPasswordEmailCodeViewSet.as_view({"post": "send"})),
     path("password/reset", ResetPasswordNotLogin.as_view({"post": "reset_password_not_login"})),
+    path('dashboard/', dashboard, name='dashboard'),
 ]

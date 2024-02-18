@@ -47,3 +47,4 @@ class Usage(CustomModelViewSet):
     return DetailResponse(data=data)
 
 
+

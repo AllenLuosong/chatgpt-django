@@ -60,7 +60,6 @@ INSTALLED_APPS = [
     'chatgpt_image',
     'django_apscheduler',
     'chatgpt_config',
-    'chatgpt_task',
     'chatgpt_usage',
 ]
 
@@ -255,7 +254,7 @@ SIMPLEUI_HOME_INFO = False # 隐藏右侧SimpleUI广告链接和使用分析
 SIMPLEUI_ANALYSIS = False # 隐藏右侧SimpleUI广告链接和使用分析
 # SIMPLEUI_HOME_INFO = True
 
-SIMPLEUI_HOME_PAGE = '/chatgpt_task/dashboard/' # 指向新创建的控制面板
+SIMPLEUI_HOME_PAGE = '/user/dashboard/' # 指向新创建的控制面板
 SIMPLEUI_HOME_TITLE = 'dashboard'
 SIMPLEUI_HOME_ICON = 'fa fa-eye'
 

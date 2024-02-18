@@ -42,7 +42,6 @@ urlpatterns = [
     path("config/", include("chatgpt_config.urls")),
     path("dashboard/", include("chatgpt_usage.urls")),
     path("ai-image/", include("chatgpt_image.urls")),
-    path("chatgpt_task/", include("chatgpt_task.urls")),
     path("file/", include("chatgpt_image.urls")),
 
 ]+ static(settings.STATIC_URL,document_root = settings.STATIC_ROOT)

@@ -13,6 +13,7 @@ from utils.serializers import CustomModelSerializer
 from rest_framework import serializers
 from chatgpt_image.models import ImageMessage, FileList
 from django.utils.translation import gettext_lazy as _
+from loguru import logger
 
 class ImageMessageSend(CustomModelSerializer):
     """
@@ -25,10 +26,12 @@ class ImageMessageSend(CustomModelSerializer):
         default="A cyberpunk monkey hacker dreaming of a beautiful bunch of bananas, digital art")
     username = serializers.CharField(required=False)
     draw_model = serializers.CharField(default="dall-e-2")
+    imageQuality = serializers.CharField(default="standard")
 
     class Meta:
         model = ImageMessage
         fields = "__all__"
+
 
 class UpdateImageMessageSend(CustomModelSerializer):
     """

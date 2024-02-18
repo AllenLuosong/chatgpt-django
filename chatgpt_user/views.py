@@ -42,6 +42,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework import permissions
 from apscheduler.schedulers.background import BackgroundScheduler
 from django_apscheduler.jobstores import DjangoJobStore, register_job
+from django.shortcuts import render
 
 
 #开启定时工作
@@ -77,7 +78,7 @@ def send_verification_email(request, to_email, verify_code,verify_ip, expire_at,
     email.content_subtype = 'html'
     # 发送邮件
     email.send()
-    EmailVerifyCode.objects.create(to_email_address=to_email, verify_code=verify_code, verify_ip=verify_ip, expire_at=expire_at).save()
+    # EmailVerifyCode.objects.create(to_email_address=to_email, verify_code=verify_code, verify_ip=verify_ip, expire_at=expire_at).save()
     logger.info(f"邮件发送成功,接收人:{to_email}, 请求人IP:{verify_ip}")
 
 
@@ -164,11 +165,10 @@ class RegisterModelViewSet(CustomModelViewSet):
             msg = "该账号已注册,请登录"
             logger.warning(f"{username}-该账号已注册,请登录")
             return ErrorResponse(msg=msg)
-        # FrontUserExtraEmail.objects.create(username=username, password=self.set_password(password,salt), salt=salt).save()
         verify_code = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(32))
         verificationUrl = settings.VERIFICATION_REDIRECT_URL + verify_code
         expire_at = timezone.now() + datetime.timedelta(minutes=int(settings.EMAIL_TIMEOUT))
-        verify_ip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
+        verify_ip = request.headers.get("X-Real-Ip", None) or request.META.get('REMOTE_ADDR')
         template = 'register_verify_email.html'
         send_verification_email(request, username, verify_code, verify_ip, expire_at, template, verificationUrl)
         return DetailResponse(data={})
@@ -276,7 +276,7 @@ class verifyEmailCodeViewSet(CustomModelViewSet):
           faker = Faker()
           faker.word()
           nikename = "ChatAI_" + faker.word()
-          ip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
+          ip = request.headers.get("X-Real-Ip", None) or request.META.get('REMOTE_ADDR')
           # 邮箱验证通过写入用户基础信息表
           FrontUserBase.objects.create(username=username, nickname=nikename, password=password, salt=salt, last_login_ip=ip)
           msg = f"{username}注册邮件核销成功"
@@ -302,7 +302,7 @@ class verifyResetPasswordEmailCodeViewSet(CustomModelViewSet):
               return ErrorResponse(msg="该邮箱未注册,请检查或发起注册")
           
           expire_at = timezone.now() + datetime.timedelta(minutes=int(settings.EMAIL_TIMEOUT))
-          verify_ip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
+          verify_ip = request.META.get('REMOTE_ADDR')
           serializer.save(to_email_address=to_email_address, verify_code=verify_code, verify_ip=verify_ip, expire_at=expire_at, biz_type=11)
           template = 'reset_password_verify_email.html'
           send_verification_email(request, to_email_address, verify_code, verify_ip, expire_at, template, verificationUrl=verify_code)
@@ -373,3 +373,9 @@ class UserInfoViewSet(CustomModelViewSet):
         }
         return DetailResponse(data=result)
 
+
+def dashboard(request):
+    user_count = FrontUserBase.objects.count()
+
+    context = { 'user_count': user_count, 'task_count': 0 }
+    return render(request, 'dashboard.html',context)

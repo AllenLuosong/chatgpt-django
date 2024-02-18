@@ -81,7 +81,7 @@ class Chat(CustomModelViewSet):
                         "text": text[:i + 1],
                     }
                     yield f"{json.dumps(data, ensure_ascii=False)}\n"
-                    time.sleep(0.05)
+                    time.sleep(0.02)
             response = StreamingHttpResponse(streaming_content=generate_streaming_text(), content_type='application/octet-stream')
             return response
         except BaseException as e:

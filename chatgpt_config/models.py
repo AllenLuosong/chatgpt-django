@@ -13,6 +13,7 @@ class Config(models.Model):
         ('openai_image_api_DALL_E_2', _('Dall2绘图配置项')),
         ('openai_image_api_DALL_E_3', _('Dall3绘图配置项')),
         ('email_config', _('邮箱服务器配置项')),
+        ('customer_config', _('自定义配置项')),
     )
     id = models.AutoField(primary_key=True)
     config_Code = models.CharField(max_length=64, choices=config_Code_CHOICES, default=10, verbose_name="业务配置码", null=True, blank=True, help_text="业务配置码")
@@ -36,8 +37,8 @@ class UserConfig(models.Model):
     baseUserId = models.IntegerField(verbose_name="用户ID", null=True, blank=True, help_text="用户ID")
     secretKey = models.CharField(max_length=64, verbose_name="配置键", null=True, blank=False, help_text="配置键")
     proxyAdress = models.CharField(max_length=255, verbose_name="配置值", null=True, blank=False, help_text="配置值")
-    chatModel = models.CharField(max_length=255, verbose_name="描述", null=True, blank=False, help_text="描述")
-    drawvalue = models.CharField(max_length=255, verbose_name="描述", null=True, blank=False, help_text="描述")
+    chatModel = models.CharField(max_length=255, verbose_name="对话模型", null=True, blank=False, help_text="对话模型")
+    drawvalue = models.CharField(max_length=255, verbose_name="绘画模型", null=True, blank=False, help_text="绘画模型")
     create_datetime = models.DateTimeField(auto_now_add=True, null=True, blank=True, help_text="创建时间", verbose_name="创建时间")
     update_datetime = models.DateTimeField(auto_now=True, null=True, blank=True, help_text="修改时间", verbose_name="修改时间")
 

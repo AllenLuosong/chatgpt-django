@@ -23,6 +23,14 @@ def Custom_exception_handler(ex, context):
       code = 401
       msg = '不正确的登录授权,请重新登录'
 
+  elif isinstance(ex, NotAuthenticated):
+      code = 401
+      msg = '登录凭证不正确,请重新登录'
+
+  elif isinstance(ex, PermissionDenied):
+      code = 403
+      msg = '今日访问次数已达到最大,请联系管理员'
+
   elif isinstance(ex, APIException):
       code = 400
       set_rollback()
@@ -36,14 +44,6 @@ def Custom_exception_handler(ex, context):
                      msg = "%s:%s" % (k, "不能为空")
                   else:
                     msg = "%s:%s" % (k, i)
-
-  elif isinstance(ex, NotAuthenticated):
-      code = 401
-      msg = '登录凭证不正确,请重新登录'
-
-  elif isinstance(ex, PermissionDenied):
-      code = 403
-      msg = '今日访问次数已达到最大,请联系管理员'
 
   elif isinstance(ex, BaseException):
       msg = str(ex)

@@ -24,7 +24,7 @@ import os
 from chatgpt_bootstrap.settings import BASE_DIR
 import uuid
 import datetime
-from chatgpt_image.tasks import put_openai_image_to_superbed
+# from chatgpt_image.tasks import put_openai_image_to_superbed
 from chatgpt_config.models import UserConfig, Config
 from chatgpt_config.serializers import UserConfigserializer
 
@@ -39,8 +39,10 @@ class Image(CustomModelViewSet):
         if serializer.is_valid(raise_exception=True):
             uuid_str = str(uuid.uuid4()).replace("-", "")
             req_data = serializer.validated_data
+            logger.info(req_data)
             serializer.save(number=req_data['number'], size=req_data['size'],
-                            prompt=req_data['prompt'], username=request.user.username, uuid=uuid_str)
+                            prompt=req_data['prompt'], username=request.user.username, 
+                            uuid=uuid_str, imageQuality=req_data['imageQuality'])
             result = {
                 "uuid": uuid_str
             }
@@ -51,6 +53,7 @@ class Image(CustomModelViewSet):
         """
         imagemessage = ImageMessage.objects.filter(uuid=uuid).first()
         serializer = ImageMessageSend(imagemessage)
+        logger.info(serializer.data['imageQuality'])
         baseUserId = request.user.id
         user_config = UserConfig.objects.filter(baseUserId=baseUserId)
         user_config_serializer = UserConfigserializer(user_config.first())
@@ -67,11 +70,13 @@ class Image(CustomModelViewSet):
           openai.api_key = openai_chat_api_3_5_config_dict.get("OPENAI_API_KEY", 'None')
           openai.api_base = openai_chat_api_3_5_config_dict.get("OPENAI_API_BASE_URL", 'None')
           drawvalue = 'dall-e-2'
+
         generation_response = openai.Image.create(
             model=drawvalue,
             prompt=serializer.data['prompt'],
             n=serializer.data['number'],
-            size=serializer.data['size']
+            size=serializer.data['size'],
+            quality=serializer.data['imageQuality']
           )
         logger.info(generation_response)
         validated_data = {'drawvalue': drawvalue}
