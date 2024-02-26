@@ -31,7 +31,7 @@ class UserConfigserializer(CustomModelSerializer):
 
     class Meta:
         model = UserConfig
-        fields = ('secretKey', 'proxyAdress', 'chatModel', 'drawvalue')
+        fields = ('secretKey', 'proxyAdress', 'chatModel', 'drawvalue', 'chatModelList')
 
 class ConfigEditserializer(CustomModelSerializer):
     """

@@ -226,7 +226,6 @@ class ResetPasswordNotLogin(CustomModelViewSet):
             return ErrorResponse(msg="邮箱不存在,请确认")
 
           req_data = serializer.validated_data
-          logger.info(req_data)
           emailVerficationCode = req_data['emailVerficationCode']
           verify_status = EmailVerifyCode.objects.filter(to_email_address=username, verify_code=emailVerficationCode, expire_at__gt=timezone.now()).first()
           if not verify_status:

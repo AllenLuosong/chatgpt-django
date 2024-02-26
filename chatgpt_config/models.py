@@ -1,8 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
-# Create your models here.
-# VIP_TYPE = models.IntegerField(verbose_name="用户类型", choices=VIP_TYPE_CHOICES, default=0, help_text="用户类型")
+from django.db.models import JSONField
 
 class Config(models.Model):
         
@@ -31,16 +29,31 @@ class Config(models.Model):
 
     # def __str__(self) -> str:
     #     return self.id, self.config_Code
+
+def get_chatModel_list():
+    return [
+          {
+            "label": "gpt-3.5-turbo",
+            "value": 'gpt-3.5-turbo',
+            "disabled": "true"
+          },
+          {
+            "label": "gpt-4",
+            "value": 'gpt-4',
+            "disabled": "fasle"
+          }
+    ]
     
 class UserConfig(models.Model):
     id = models.AutoField(primary_key=True)
     baseUserId = models.IntegerField(verbose_name="用户ID", null=True, blank=True, help_text="用户ID")
-    secretKey = models.CharField(max_length=64, verbose_name="配置键", null=True, blank=False, help_text="配置键")
-    proxyAdress = models.CharField(max_length=255, verbose_name="配置值", null=True, blank=False, help_text="配置值")
-    chatModel = models.CharField(max_length=255, verbose_name="对话模型", null=True, blank=False, help_text="对话模型")
-    drawvalue = models.CharField(max_length=255, verbose_name="绘画模型", null=True, blank=False, help_text="绘画模型")
+    secretKey = models.CharField(max_length=64, verbose_name="配置键", null=True, blank=True, help_text="配置键")
+    proxyAdress = models.CharField(max_length=255, verbose_name="配置值", null=True, blank=True, help_text="配置值")
+    chatModel = models.CharField(max_length=100, verbose_name="对话模型", help_text="对话模型")
+    drawvalue = models.CharField(max_length=255, verbose_name="绘画模型", null=True, blank=True, help_text="绘画模型")
     create_datetime = models.DateTimeField(auto_now_add=True, null=True, blank=True, help_text="创建时间", verbose_name="创建时间")
     update_datetime = models.DateTimeField(auto_now=True, null=True, blank=True, help_text="修改时间", verbose_name="修改时间")
+    chatModelList = JSONField('权限列表', default=dict)
 
     class Meta:
         db_table = "user_config"

@@ -87,9 +87,9 @@ class UserInfoSerializer(CustomModelSerializer):
       
 
 class ResetPasswordSerializer(CustomModelSerializer):
-    username = to_email_address = serializers.CharField(required=True)
-    newPassword = password =  serializers.CharField(required=True)
-    emailVerficationCode = serializers.CharField(required=True)
+    username = to_email_address = serializers.CharField(required=False)
+    newPassword = password= serializers.CharField(required=False)
+    emailVerficationCode = serializers.CharField(required=False, allow_blank=True)
 
     class Meta:
         model = FrontUserBase
