@@ -4,7 +4,7 @@ from chatgpt_config.models import Config, UserConfig
 
 class ConfigAdmin(admin.ModelAdmin):
     # 定制哪些字段需要展示
-    list_display = ('config_Code', 'key', 'value', 'describtion', 'create_datetime', 'update_datetime',)
+    list_display = ('config_Code', 'key', 'value', 'describtion',)
 
     '''分页：每页10条'''
     list_per_page = 10
@@ -21,7 +21,7 @@ class ConfigAdmin(admin.ModelAdmin):
 
 class UserConfigAdmin(admin.ModelAdmin):
     # 定制哪些字段需要展示
-    list_display = ('baseUserId', 'secretKey', 'proxyAdress', 'drawvalue', 'create_datetime', 'update_datetime',)
+    list_display = ('baseUserId', 'secretKey', 'proxyAdress', 'chatModel', 'drawvalue', 'update_datetime',)
 
     '''分页：每页10条'''
     list_per_page = 10

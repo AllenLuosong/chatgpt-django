@@ -43,7 +43,7 @@ from rest_framework import permissions
 from apscheduler.schedulers.background import BackgroundScheduler
 from django_apscheduler.jobstores import DjangoJobStore, register_job
 from django.shortcuts import render
-
+from chatgpt_config.models import Config, UserConfig
 
 #开启定时工作
 try:
@@ -78,7 +78,7 @@ def send_verification_email(request, to_email, verify_code,verify_ip, expire_at,
     email.content_subtype = 'html'
     # 发送邮件
     email.send()
-    # EmailVerifyCode.objects.create(to_email_address=to_email, verify_code=verify_code, verify_ip=verify_ip, expire_at=expire_at).save()
+    EmailVerifyCode.objects.create(to_email_address=to_email, verify_code=verify_code, verify_ip=verify_ip, expire_at=expire_at).save()
     logger.info(f"邮件发送成功,接收人:{to_email}, 请求人IP:{verify_ip}")
 
 
@@ -166,9 +166,11 @@ class RegisterModelViewSet(CustomModelViewSet):
             logger.warning(f"{username}-该账号已注册,请登录")
             return ErrorResponse(msg=msg)
         verify_code = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(32))
-        verificationUrl = settings.VERIFICATION_REDIRECT_URL + verify_code
+        VERIFICATION_REDIRECT_URL = Config.objects.filter(config_Code='email_config', key='VERIFICATION_REDIRECT_URL').first().value
+        verificationUrl = VERIFICATION_REDIRECT_URL + verify_code
+        logger.debug(f'verificationUrl:{verificationUrl}')
         expire_at = timezone.now() + datetime.timedelta(minutes=int(settings.EMAIL_TIMEOUT))
-        verify_ip = request.headers.get("X-Real-Ip", None) or request.META.get('REMOTE_ADDR')
+        verify_ip = request.headers.get("X-HTTP_X_FORWARDED_FOR-Ip", None) or request.META.get('REMOTE_ADDR')
         template = 'register_verify_email.html'
         send_verification_email(request, username, verify_code, verify_ip, expire_at, template, verificationUrl)
         return DetailResponse(data={})
@@ -278,6 +280,10 @@ class verifyEmailCodeViewSet(CustomModelViewSet):
           ip = request.headers.get("X-Real-Ip", None) or request.META.get('REMOTE_ADDR')
           # 邮箱验证通过写入用户基础信息表
           FrontUserBase.objects.create(username=username, nickname=nikename, password=password, salt=salt, last_login_ip=ip)
+          baseUserId= FrontUserBase.objects.filter(username=username).first().id
+          logger.info(baseUserId)
+          UserConfig.objects.create(baseUserId=baseUserId)
+          # , secretKey='', proxyAdress='', chatMode='', drawvalue='', chatModelList=''
           msg = f"{username}注册邮件核销成功"
           logger.info(msg)
           return DetailResponse(msg)
@@ -378,3 +384,7 @@ def dashboard(request):
 
     context = { 'user_count': user_count, 'task_count': 0 }
     return render(request, 'dashboard.html',context)
+
+def UserUpateVIP(request):
+    username = request.data.get('username',None)
+    FrontUserBase.objects.update_or_create()

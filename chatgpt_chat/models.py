@@ -7,7 +7,7 @@ class ChatMessage(models.Model):
     
 
     id = models.AutoField(primary_key=True)
-    baseUserId = models.IntegerField(verbose_name="用户名", null=True, blank=True, help_text="用户名")
+    baseUserId = models.IntegerField(verbose_name="用户ID", null=True, blank=True, help_text="用户ID")
     prompt = models.TextField(verbose_name="提示语", null=True, blank=True, help_text="提示语")
     completion = models.TextField(verbose_name="回复词", null=True, blank=True, help_text="回复词")
     chat_model = models.CharField(max_length=32, verbose_name="会话模型", null=True, blank=True, help_text="会话模型")

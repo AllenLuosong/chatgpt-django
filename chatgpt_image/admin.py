@@ -4,7 +4,7 @@ from chatgpt_image.models import ImageMessage
 
 class ImageMessageAdmin(admin.ModelAdmin):
     # 定制哪些字段需要展示
-    list_display = ('username', 'uuid', 'prompt', 'size', 'number', 'res_data', 'create_datetime', 'update_datetime',)
+    list_display = ('baseUserId', 'uuid', 'prompt', 'size', 'number', 'res_data', 'create_datetime', 'update_datetime',)
 
     '''分页：每页10条'''
     list_per_page = 10

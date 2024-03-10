@@ -41,7 +41,7 @@ class Image(CustomModelViewSet):
             req_data = serializer.validated_data
             logger.info(req_data)
             serializer.save(number=req_data['number'], size=req_data['size'],
-                            prompt=req_data['prompt'], username=request.user.username, 
+                            prompt=req_data['prompt'], baseUserId=request.user.id, 
                             uuid=uuid_str, imageQuality=req_data['imageQuality'])
             result = {
                 "uuid": uuid_str
@@ -96,7 +96,7 @@ class Image(CustomModelViewSet):
         return DetailResponse(data=result)
 
     def images_list(self, request):
-        imagemessage = ImageMessage.objects.filter(username=request.user.username)[:10]
+        imagemessage = ImageMessage.objects.filter(baseUserId=request.user.id)[:10]
         logger.debug(imagemessage)
         serializer = ImageMessageSend(imagemessage)
         return DetailResponse(serializer.data)

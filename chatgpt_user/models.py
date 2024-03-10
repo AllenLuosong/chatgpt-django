@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 import uuid
 from captcha.views import CaptchaStore
 from django.contrib.auth.models import AbstractUser
+from faker import Faker
 
 class CustomerCaptchaStore(CaptchaStore):
     pic_code_seesion_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -53,11 +54,12 @@ class EmailVerifyCode(models.Model):
 
 
 class FrontUserBase(AbstractUser, models.Model):
-
+  
     VIP_TYPE_CHOICES = (
         (0, _('普通用户')),
         (1, _('vip付费用户')),
     )
+
     id = models.AutoField(primary_key=True, unique=True, verbose_name="客户唯一编号", help_text="客户唯一编号")
     username = models.EmailField(max_length=255, unique=True, verbose_name="登录邮箱", null=True, blank=True, help_text="登录邮箱")
     nickname = models.CharField(max_length=32, verbose_name="用户昵称", null=True, blank=True, help_text="用户昵称")
@@ -78,7 +80,6 @@ class FrontUserBase(AbstractUser, models.Model):
         verbose_name = "用户基础信息表"
         verbose_name_plural = verbose_name
         ordering = ("-create_datetime",)
-
 
 
 class SysEmailSendLog(models.Model):

@@ -4,7 +4,7 @@ from chatgpt_user.models import FrontUserBase, EmailVerifyCode, FrontUserExtraEm
 
 class FrontUserBaseAdmin(admin.ModelAdmin):
     # 定制哪些字段需要展示
-    list_display = ('username', 'nickname', 'password', 'VIP_TYPE', 'last_login_ip', 'vip_expire_at', 'call_count', 'create_datetime', 'update_datetime',)
+    list_display = ('id', 'username', 'nickname','VIP_TYPE', 'last_login_ip', 'vip_expire_at', 'call_count', 'create_datetime', 'update_datetime',)
 
     '''分页：每页10条'''
     list_per_page = 10
