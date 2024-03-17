@@ -23,6 +23,7 @@ from utils.json_response import ErrorResponse
 from utils.permisson import LimitedAccessPermission
 from chatgpt_config.models import Config, UserConfig
 import json
+from chatgpt_user.models import UserBenefits
 
 class Chat(CustomModelViewSet):
     serializer_class = ChatMessageSerializers
@@ -67,6 +68,11 @@ class Chat(CustomModelViewSet):
             total_tokens = completion.usage.total_tokens
             serializer.save(prompt=prompt,baseUserId=request.user.id,completion=completion,chat_model=openai_model,
                 prompt_tokens=prompt_tokens,completion_tokens=completion_tokens,total_tokens=total_tokens)
+
+            res = UserBenefits.objects.filter(baseUserId=baseUserId).first() # 更新用户福利表
+            res.left_tokens -=total_tokens
+            res.save()
+
             def generate_streaming_text(text=chat_text):
                 # 流媒体文本处理方法
                 id = str(uuid.uuid4())

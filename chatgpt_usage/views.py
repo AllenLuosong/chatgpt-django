@@ -10,15 +10,14 @@ from django.utils import timezone
 from django.db.models import Sum
 from chatgpt_usage.throttles import *
 from chatgpt_image.models import ImageMessage
+from chatgpt_user.models import UserBenefits
 # Create your views here.
 
 class Usage(CustomModelViewSet):
   permission_classes = [permissions.IsAuthenticated]
-  # throttle_classes = [UsageAnonRateThrottle, UsageUserRateThrottle]
 
   def list(self, request):
     baseUserId = request.user.id
-    user_config = UserConfig.objects.filter(baseUserId=baseUserId).first()
     current_year = timezone.now().year
     current_month = timezone.now().month
     # 今日请求图片
@@ -29,24 +28,17 @@ class Usage(CustomModelViewSet):
     today_user_usage = ChatMessage.objects.filter(baseUserId=baseUserId, created=timezone.now().date()).aggregate(nums=Sum('total_tokens'))
     # 当月消耗tokens
     mothly_user_usage = ChatMessage.objects.filter(baseUserId=baseUserId, created__year=current_year, created__month=current_month).aggregate(nums=Sum('total_tokens'))
+
+    res = UserBenefits.objects.filter(baseUserId=baseUserId).first()
     data = {
             "today_user_usage": today_user_usage.get('nums', '0'), 
             "mothly_user_usage": mothly_user_usage.get('nums', '0'),
             "today_user_image_usage": today_user_image_usage.get('nums', '0'),
-            "mothly_user_image_usage": mothly_user_image_usage.get('nums', '0')
+            "mothly_user_image_usage": mothly_user_image_usage.get('nums', '0'),
+            "left_tokens": res.left_tokens,
+            "left_dalle": res.left_dalle
             }
-    if user_config.secretKey:
-      secretKey = user_config.secretKey
-      headers = {
-                "Authorization": f"Bearer {secretKey}",
-                 "Content-Type": "application/json"
-                 }
-      url = user_config.proxyAdress.rsplit('/',1)[0] + '/dashboard/billing/credit_grants'
-      response = requests.request('GET', url=url, headers=headers)
-      data.update(response.json())
-      return DetailResponse(data=data)
-    else:
-      return DetailResponse(data=data)
+    return DetailResponse(data=data)
 
 
   def userUsage(self, request):
@@ -55,7 +47,5 @@ class Usage(CustomModelViewSet):
     current_month = timezone.now().month
     today_user_usage = ChatMessage.objects.filter(baseUserId=baseUserId, created=timezone.now().date()).aggregate(nums=Sum('total_tokens'))
     mothly_user_usage = ChatMessage.objects.filter(baseUserId=baseUserId, created__year=current_year, created__month=current_month).aggregate(nums=Sum('total_tokens'))
-    logger.info(today_user_usage['nums'])
-    logger.info(mothly_user_usage['nums'])
     data = {"today_user_usage": today_user_usage, "mothly_user_usage": mothly_user_usage}
     return DetailResponse(data=data)

@@ -4,6 +4,7 @@ import uuid
 from captcha.views import CaptchaStore
 from django.contrib.auth.models import AbstractUser
 from faker import Faker
+from loguru import logger
 
 class CustomerCaptchaStore(CaptchaStore):
     pic_code_seesion_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -109,5 +110,68 @@ class SysEmailSendLog(models.Model):
     class Meta:
         db_table = "sys_email_send_log"
         verbose_name = "邮箱发送日志"
+        verbose_name_plural = verbose_name
+        ordering = ("-create_datetime",)
+
+  
+class CheckIn(models.Model):
+    id = models.AutoField(primary_key=True)
+    baseUserId = models.IntegerField(verbose_name="用户ID", null=True, blank=True, help_text="签到用户")
+    benefits_tokens = models.IntegerField(default=2000, verbose_name="签到赠送tokens", null=True, blank=True, help_text="签到赠送tokens")
+    benefits_dalle = models.IntegerField(default=2, verbose_name="签到赠送dalle", null=True, blank=True, help_text="签到赠送dall-e-2,3")
+    check_in_date = models.DateField(auto_now_add=True, null=True, blank=True, help_text="签到日期", verbose_name="签到日期")
+    create_datetime = models.DateTimeField(auto_now_add=True, null=True, blank=True, help_text="签到时间", verbose_name="创建时间")
+    update_datetime = models.DateTimeField(auto_now=True, null=True, blank=True, help_text="修改时间", verbose_name="修改时间")
+
+    class Meta:
+        db_table = "front_user_check_in"
+        verbose_name = "用户签到表"
+        verbose_name_plural = verbose_name
+        ordering = ("-create_datetime",)
+
+class UserBenefits(models.Model):
+    
+    BENEFITS_SOURCE_CHOICES = (
+        (1, _('兑换')),
+        (0, _('签到')),
+    )
+        
+    id = models.AutoField(primary_key=True)
+    baseUserId = models.IntegerField(verbose_name="用户ID", null=True, blank=True, help_text="用户ID")
+    total_benefits_tokens = models.IntegerField(default=2000, verbose_name="累计赠送tokens", null=True, blank=True, help_text="累计赠送tokens")
+    total_benefits_dalle = models.IntegerField(default=2, verbose_name="累计赠送dalle", null=True, blank=True, help_text="累计dalle-2,3")
+    left_tokens = models.IntegerField(default=2000, verbose_name="剩余tokens", null=True, blank=True, help_text="剩余tokens")
+    left_dalle = models.IntegerField(default=2, verbose_name="剩余dalle", null=True, blank=True, help_text="剩余dalle-2,3")
+    benefits_source = models.IntegerField(verbose_name="福利来源", choices=BENEFITS_SOURCE_CHOICES, default=0, help_text="福利来源,0:签到,1:兑换")
+    create_datetime = models.DateTimeField(auto_now_add=True, null=True, blank=True, help_text="创建时间", verbose_name="创建时间")
+    update_datetime = models.DateTimeField(auto_now=True, null=True, blank=True, help_text="修改时间", verbose_name="修改时间")
+
+    class Meta:
+        db_table = "front_user_benefits"
+        verbose_name = "用户福利表"
+        verbose_name_plural = verbose_name
+        ordering = ("-create_datetime",)
+
+
+class UserRedeem(models.Model):
+    
+    VERIFIED_STATUS_CHOICES = (
+        (0, _('未验证')),
+        (1, _('已验证')),
+    )
+        
+    id = models.AutoField(primary_key=True)
+    baseUserId = models.IntegerField(verbose_name="用户ID", null=True, blank=True, help_text="用户ID")
+    redeem_code = models.CharField(max_length=32, verbose_name="兑换卡密", null=True, blank=True, help_text="兑换卡密")
+    redeem_tokens = models.IntegerField(default=2000, verbose_name="兑换赠送tokens", null=True, blank=True, help_text="兑换赠送tokens")
+    redeem_dalle = models.IntegerField(default=2, verbose_name="兑换赠送dalle", null=True, blank=True, help_text="兑换赠送dall-e-2,3")
+    verified = models.IntegerField(verbose_name="是否验证", choices=VERIFIED_STATUS_CHOICES, default=0, help_text="是否验证 0 未验证 1 已验证")
+    expire_at = models.DateTimeField(verbose_name="兑换卡密过期时间", null=True, blank=True, help_text="兑换卡密过期时间")
+    create_datetime = models.DateTimeField(auto_now_add=True, null=True, blank=True, help_text="签到时间", verbose_name="创建时间")
+    update_datetime = models.DateTimeField(auto_now=True, null=True, blank=True, help_text="修改时间", verbose_name="修改时间")
+
+    class Meta:
+        db_table = "front_user_redeem"
+        verbose_name = "用户卡密兑换表"
         verbose_name_plural = verbose_name
         ordering = ("-create_datetime",)

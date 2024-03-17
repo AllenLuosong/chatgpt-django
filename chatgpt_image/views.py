@@ -24,6 +24,7 @@ import os
 from chatgpt_bootstrap.settings import BASE_DIR
 import uuid
 import datetime
+from chatgpt_user.models import UserBenefits
 # from chatgpt_image.tasks import put_openai_image_to_superbed
 from chatgpt_config.models import UserConfig, Config
 from chatgpt_config.serializers import UserConfigserializer
@@ -84,6 +85,10 @@ class Image(CustomModelViewSet):
         # 将图片资源另存到在线图床
         # url_list = [url["url"] for url in  generation_response["data"] ]
         # put_openai_image_to_superbed.delay(uuid, url_list) 
+        
+        res = UserBenefits.objects.filter(baseUserId=baseUserId).first() # 更新用户福利表
+        res.left_dalle -=1
+        res.save()
 
         dt_object = datetime.datetime.fromtimestamp(
             generation_response['created'])

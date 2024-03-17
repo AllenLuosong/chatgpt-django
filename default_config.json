@@ -8,5 +8,25 @@
     "label": "gpt-4(会员可用)",
     "value": "gpt-4",
     "disabled": true
+  },
+  {
+    "label": "gpt-3.5-turbo-16k",
+    "value": "gpt-3.5-turbo-16k",
+    "disabled": false
+  },  
+  {
+    "label": "gpt-4-0125-preview(会员可用)",
+    "value": "gpt-4-0125-preview",
+    "disabled": true
+  },
+  {
+    "label": "gpt-4-turbo-preview(会员可用)",
+    "value": "gpt-4-turbo-preview",
+    "disabled": true
+  },
+  {
+    "label": "gpt-3.5-turbo-1106",
+    "value": "gpt-3.5-turbo-1106",
+    "disabled": false
   }
 ]

@@ -14,6 +14,7 @@ from chatgpt_user.serializers import (
     RegisterDetailSerializer,
     UserInfoSerializer,
     ResetPasswordSerializer,
+    CheckInSerializer,
     EmailVerifyCodeSerializer
 )
 from utils.viewset import CustomModelViewSet
@@ -44,6 +45,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from django_apscheduler.jobstores import DjangoJobStore, register_job
 from django.shortcuts import render
 from chatgpt_config.models import Config, UserConfig
+from chatgpt_user.models import CheckIn, UserBenefits
 
 #开启定时工作
 try:
@@ -278,12 +280,15 @@ class verifyEmailCodeViewSet(CustomModelViewSet):
           faker.word()
           nikename = "ChatAI_" + faker.word()
           ip = request.headers.get("X-Real-Ip", None) or request.META.get('REMOTE_ADDR')
-          # 邮箱验证通过写入用户基础信息表
+          # 邮箱注册验证通过写入用户基础信息表
           FrontUserBase.objects.create(username=username, nickname=nikename, password=password, salt=salt, last_login_ip=ip)
           baseUserId= FrontUserBase.objects.filter(username=username).first().id
           logger.info(baseUserId)
+          # 邮箱注册验证通过写入用户配置表
           UserConfig.objects.create(baseUserId=baseUserId)
-          # , secretKey='', proxyAdress='', chatMode='', drawvalue='', chatModelList=''
+          # 邮箱注册验证通过写入用户福利表
+          UserBenefits.objects.create(baseUserId=baseUserId)
+
           msg = f"{username}注册邮件核销成功"
           logger.info(msg)
           return DetailResponse(msg)
@@ -388,3 +393,26 @@ def dashboard(request):
 def UserUpateVIP(request):
     username = request.data.get('username',None)
     FrontUserBase.objects.update_or_create()
+
+class SignIn(CustomModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def check_in(self, request):
+        baseUserId = request.user.id
+        if request.method == 'POST':
+          res, flag =CheckIn.objects.get_or_create(baseUserId=baseUserId, create_datetime__day=timezone.now().day)
+          if flag: 
+            # 每天首次签到赠送福利
+            res = UserBenefits.objects.filter(baseUserId=baseUserId).first()
+            res.total_benefits_tokens +=2000
+            res.total_benefits_dalle +=2
+            res.left_tokens +=2000
+            res.left_dalle +=2
+            res.save()
+
+          return DetailResponse(msg='今日已签到成功,快去使用吧')
+        elif request.method == 'GET':
+          user_check_in_data = CheckIn.objects.filter(baseUserId=baseUserId, create_datetime__month=timezone.now().month)
+          data = {"checked_in_date":[int(date.check_in_date.day) for date in user_check_in_data]} 
+          return DetailResponse(data=data)
+        

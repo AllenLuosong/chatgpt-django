@@ -18,6 +18,7 @@ from chatgpt_user.views import (
     ResetPassword,
     verifyResetPasswordEmailCodeViewSet,
     ResetPasswordNotLogin,
+    SignIn,
     dashboard
 )
 
@@ -37,4 +38,6 @@ urlpatterns = [
     path("password/reset/verify_email_code", verifyResetPasswordEmailCodeViewSet.as_view({"post": "send"})),
     path("password/reset", ResetPasswordNotLogin.as_view({"post": "reset_password_not_login"})),
     path('dashboard/', dashboard, name='dashboard'),
+    path("checkIn", SignIn.as_view({"post": "check_in"})),
+    path("checkInData", SignIn.as_view({"get": "check_in"})),
 ]

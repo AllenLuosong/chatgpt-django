@@ -9,7 +9,7 @@ Version          : 1.0
 '''
 
 
-from chatgpt_user.models import FrontUserExtraEmail, FrontUserBase, EmailVerifyCode
+from chatgpt_user.models import FrontUserExtraEmail, FrontUserBase, EmailVerifyCode, CheckIn
 from utils.serializers import CustomModelSerializer
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -94,3 +94,11 @@ class ResetPasswordSerializer(CustomModelSerializer):
     class Meta:
         model = FrontUserBase
         fields = ("id", "username", "password", "newPassword", "to_email_address", "emailVerficationCode", )
+
+class CheckInSerializer(CustomModelSerializer):
+    baseUserId = serializers.IntegerField(required=False)
+    check_in_date = serializers.DateField(required=False)
+
+    class Meta:
+        model = CheckIn
+        fields = ("baseUserId", "check_in_date",)
