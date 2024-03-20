@@ -57,7 +57,6 @@ INSTALLED_APPS = [
     'django_comment_migrate',
     'chatgpt_chat',
     'chatgpt_image',
-    'django_apscheduler',
     'chatgpt_config',
     'chatgpt_usage',
 ]

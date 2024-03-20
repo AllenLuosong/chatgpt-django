@@ -23,7 +23,7 @@ from utils.json_response import ErrorResponse
 from utils.permisson import LimitedAccessPermission
 from chatgpt_config.models import Config, UserConfig
 import json
-from chatgpt_user.models import UserBenefits
+from chatgpt_user.models import UserBenefits, FrontUserBase
 
 class Chat(CustomModelViewSet):
     serializer_class = ChatMessageSerializers
@@ -33,17 +33,26 @@ class Chat(CustomModelViewSet):
     def create(self, request):
         baseUserId = request.user.id
         user_config = UserConfig.objects.filter(baseUserId=baseUserId)
+        res = FrontUserBase.objects.filter(id=baseUserId).first()
         serializer = UserConfigserializer(user_config.first())
+        openai_chat_api_3_5_config = Config.objects.filter(config_Code='openai_chat_api_3_5')
+        openai_chat_api_3_5_config_dict = {}
+        for i in openai_chat_api_3_5_config:
+          openai_chat_api_3_5_config_dict.update({i.key: i.value})
         logger.info(serializer.data)
         if serializer.data.get('secretKey', 'None'):
+          # 自定义代理处理逻辑
           openai.api_key = serializer.data.get('secretKey', 'None')
           openai.api_base = serializer.data.get('proxyAdress', 'None')
           openai_model = serializer.data.get('chatModel', 'None')
+
+        elif res.VIP_TYPE == 1:
+          # 会员处理逻辑
+          openai.api_key = openai_chat_api_3_5_config_dict.get("OPENAI_API_KEY", 'None')
+          openai.api_base = openai_chat_api_3_5_config_dict.get("OPENAI_API_BASE_URL", 'None')
+          openai_model = serializer.data.get('chatModel', 'None')
+        
         else:
-          openai_chat_api_3_5_config_dict = {}
-          openai_chat_api_3_5_config = Config.objects.filter(config_Code='openai_chat_api_3_5')
-          for i in openai_chat_api_3_5_config:
-            openai_chat_api_3_5_config_dict.update({i.key: i.value})
           openai.api_key = openai_chat_api_3_5_config_dict.get("OPENAI_API_KEY", 'None')
           openai.api_base = openai_chat_api_3_5_config_dict.get("OPENAI_API_BASE_URL", 'None')
           openai_model = openai_chat_api_3_5_config_dict.get("model", 'None')

@@ -41,27 +41,10 @@ from faker import Faker
 import jwt
 from rest_framework.permissions import AllowAny
 from rest_framework import permissions
-from apscheduler.schedulers.background import BackgroundScheduler
-from django_apscheduler.jobstores import DjangoJobStore, register_job
 from django.shortcuts import render
 from chatgpt_config.models import Config, UserConfig
 from chatgpt_user.models import CheckIn, UserBenefits
 
-#开启定时工作
-try:
-    # 实例化调度器
-    scheduler = BackgroundScheduler()
-    # 调度器使用DjangoJobStore()
-    scheduler.add_jobstore(DjangoJobStore(), "default")
-    # 另一种方式为每天固定时间执行任务，对应代码为：
-    @register_job(scheduler, 'cron', hour='1', minute='17', second='01',id='task', replace_existing=True )
-    def my_job():
-        # 更新所有用户的调用次数为0
-        FrontUserBase.objects.all().update(call_count=0, update_datetime=datetime.datetime.now())
-        logger.info("已重置所有用户的调用次数")
-    scheduler.start()
-except Exception as e:
-    logger.error(f"定时任务异常-{e}")
 
 def send_verification_email(request, to_email, verify_code,verify_ip, expire_at, template='register_verify_email.html', verificationUrl=None):
     """ 邮件发送方法 

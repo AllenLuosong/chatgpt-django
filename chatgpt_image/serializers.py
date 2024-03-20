@@ -25,7 +25,7 @@ class ImageMessageSend(CustomModelSerializer):
     prompt = serializers.CharField(
         default="A cyberpunk monkey hacker dreaming of a beautiful bunch of bananas, digital art")
     username = serializers.CharField(required=False)
-    draw_model = serializers.CharField(default="dall-e-2")
+    draw_model = model = serializers.CharField(default="dall-e-2")
     imageQuality = serializers.CharField(default="standard")
 
     class Meta:

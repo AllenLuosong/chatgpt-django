@@ -24,7 +24,7 @@ import os
 from chatgpt_bootstrap.settings import BASE_DIR
 import uuid
 import datetime
-from chatgpt_user.models import UserBenefits
+from chatgpt_user.models import UserBenefits, FrontUserBase
 # from chatgpt_image.tasks import put_openai_image_to_superbed
 from chatgpt_config.models import UserConfig, Config
 from chatgpt_config.serializers import UserConfigserializer
@@ -37,10 +37,10 @@ class Image(CustomModelViewSet):
         """ 返回一个用于创建图片的uuid
         """
         serializer = ImageMessageSend(data=request.data)
+        logger.info(request.data)
         if serializer.is_valid(raise_exception=True):
             uuid_str = str(uuid.uuid4()).replace("-", "")
             req_data = serializer.validated_data
-            logger.info(req_data)
             serializer.save(number=req_data['number'], size=req_data['size'],
                             prompt=req_data['prompt'], baseUserId=request.user.id, 
                             uuid=uuid_str, imageQuality=req_data['imageQuality'])
@@ -58,11 +58,23 @@ class Image(CustomModelViewSet):
         baseUserId = request.user.id
         user_config = UserConfig.objects.filter(baseUserId=baseUserId)
         user_config_serializer = UserConfigserializer(user_config.first())
+        res = FrontUserBase.objects.filter(id=baseUserId).first()
+        openai_chat_api_3_5_config = Config.objects.filter(config_Code='openai_chat_api_3_5')
+        openai_chat_api_3_5_config_dict = {}
+        for i in openai_chat_api_3_5_config:
+          openai_chat_api_3_5_config_dict.update({i.key: i.value})
 
         if user_config_serializer.data.get('secretKey', 'None'):
           openai.api_key = user_config_serializer.data.get('secretKey', 'None')
           openai.api_base = user_config_serializer.data.get('proxyAdress', 'None')
           drawvalue = user_config_serializer.data.get('drawvalue', 'None')
+          
+        elif res.VIP_TYPE == 1:
+          # 会员处理逻辑
+          openai.api_key = openai_chat_api_3_5_config_dict.get("OPENAI_API_KEY", 'None')
+          openai.api_base = openai_chat_api_3_5_config_dict.get("OPENAI_API_BASE_URL", 'None')
+          drawvalue = user_config_serializer.data.get('drawvalue', 'None')
+
         else:
           openai_chat_api_3_5_config_dict = {}
           openai_chat_api_3_5_config = Config.objects.filter(config_Code='openai_chat_api_3_5')
