@@ -25,8 +25,23 @@
     "disabled": true
   },
   {
-    "label": "gpt-3.5-turbo-1106",
-    "value": "gpt-3.5-turbo-1106",
+    "label": "claude-3-opus-20240229",
+    "value": "claude-3-opus-20240229",
     "disabled": false
+  },
+  {
+    "label": "claude-3-haiku-20240307",
+    "value": "claude-3-haiku-20240307",
+    "disabled": false
+  },
+    {
+    "label": "claude-3-sonnet-20240229(会员可用)",
+    "value": "claude-3-sonnet-20240229",
+    "disabled": true
+  },
+  {
+    "label": "gpt-3.5-turbo-1106(会员可用)",
+    "value": "gpt-3.5-turbo-1106",
+    "disabled": true
   }
 ]

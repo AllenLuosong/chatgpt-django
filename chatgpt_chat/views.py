@@ -24,6 +24,7 @@ from utils.permisson import LimitedAccessPermission
 from chatgpt_config.models import Config, UserConfig
 import json
 from chatgpt_user.models import UserBenefits, FrontUserBase
+from anthropic import Anthropic
 
 class Chat(CustomModelViewSet):
     serializer_class = ChatMessageSerializers
@@ -40,66 +41,105 @@ class Chat(CustomModelViewSet):
         for i in openai_chat_api_3_5_config:
           openai_chat_api_3_5_config_dict.update({i.key: i.value})
         logger.info(serializer.data)
-        if serializer.data.get('secretKey', 'None'):
-          # 自定义代理处理逻辑
-          openai.api_key = serializer.data.get('secretKey', 'None')
-          openai.api_base = serializer.data.get('proxyAdress', 'None')
-          openai_model = serializer.data.get('chatModel', 'None')
-
-        elif res.VIP_TYPE == 1:
-          # 会员处理逻辑
-          openai.api_key = openai_chat_api_3_5_config_dict.get("OPENAI_API_KEY", 'None')
-          openai.api_base = openai_chat_api_3_5_config_dict.get("OPENAI_API_BASE_URL", 'None')
-          openai_model = serializer.data.get('chatModel', 'None')
-        
-        else:
-          openai.api_key = openai_chat_api_3_5_config_dict.get("OPENAI_API_KEY", 'None')
-          openai.api_base = openai_chat_api_3_5_config_dict.get("OPENAI_API_BASE_URL", 'None')
-          openai_model = openai_chat_api_3_5_config_dict.get("model", 'None')
-
         prompt = request.data["prompt"]
-        serializer = ChatMessageSerializers(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-           logger.info(serializer.validated_data)
-        try:
-            completion = openai.ChatCompletion.create(
-                model= openai_model,
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant."},
-                    {"role": "user", "content": prompt}
-                ],
-                request_timeout = 45,
-            )
-            logger.info(f"completion-{completion}")
-            chat_text = completion.choices[0].message.content
-            prompt_tokens = completion.usage.prompt_tokens
-            completion_tokens = completion.usage.completion_tokens
-            total_tokens = completion.usage.total_tokens
-            serializer.save(prompt=prompt,baseUserId=request.user.id,completion=completion,chat_model=openai_model,
-                prompt_tokens=prompt_tokens,completion_tokens=completion_tokens,total_tokens=total_tokens)
+        if serializer.data['chatModel'].startswith('gpt'):
+          # chatgpt 处理逻辑
+          if serializer.data.get('secretKey', 'None'):
+            # 自定义代理处理逻辑
+            openai.api_key = serializer.data.get('secretKey', 'None')
+            openai.api_base = serializer.data.get('proxyAdress', 'None')
+            openai_model = serializer.data.get('chatModel', 'None')
 
-            res = UserBenefits.objects.filter(baseUserId=baseUserId).first() # 更新用户福利表
-            res.left_tokens -=total_tokens
-            res.save()
+          elif res.VIP_TYPE == 1:
+            # 会员处理逻辑
+            openai.api_key = openai_chat_api_3_5_config_dict.get("OPENAI_API_KEY", 'None')
+            openai.api_base = openai_chat_api_3_5_config_dict.get("OPENAI_API_BASE_URL", 'None')
+            openai_model = serializer.data.get('chatModel', 'None')
+          
+          else:
+            openai.api_key = openai_chat_api_3_5_config_dict.get("OPENAI_API_KEY", 'None')
+            openai.api_base = openai_chat_api_3_5_config_dict.get("OPENAI_API_BASE_URL", 'None')
+            openai_model = openai_chat_api_3_5_config_dict.get("model", 'None')
 
-            def generate_streaming_text(text=chat_text):
-                # 流媒体文本处理方法
-                id = str(uuid.uuid4())
-                parent_message_id = str(uuid.uuid4())
-                conversation_id = str(uuid.uuid4())
-                for i, char in enumerate(text):
-                    data = {
-                        "role": "null",
-                        "id": id,
-                        "parentMessageId": parent_message_id,
-                        "conversationId": conversation_id,
-                        "text": text[:i + 1],
-                    }
-                    yield f"{json.dumps(data, ensure_ascii=False)}\n"
-                    time.sleep(0.02)
-            response = StreamingHttpResponse(streaming_content=generate_streaming_text(), content_type='application/octet-stream')
-            return response
-        except BaseException as e:
-            msg="请求失败,请稍后再试"
-            logger.error(f'{msg}-后台返回-{e}')
-            return ErrorResponse(code=500, data={}, msg=msg)
+          serializer = ChatMessageSerializers(data=request.data)
+
+          if serializer.is_valid(raise_exception=True):
+            logger.info(serializer.validated_data)
+          try:
+              completion = openai.ChatCompletion.create(
+                  model= openai_model,
+                  messages=[
+                      {"role": "system", "content": "You are a helpful assistant."},
+                      {"role": "user", "content": prompt}
+                  ],
+                  request_timeout = 45,
+              )
+              logger.info(f"completion-{completion}")
+              chat_text = completion.choices[0].message.content
+              prompt_tokens = completion.usage.prompt_tokens
+              completion_tokens = completion.usage.completion_tokens
+              total_tokens = completion.usage.total_tokens
+              serializer.save(prompt=prompt,baseUserId=request.user.id,completion=completion,chat_model=openai_model,
+                  prompt_tokens=prompt_tokens,completion_tokens=completion_tokens,total_tokens=total_tokens)
+
+              res = UserBenefits.objects.filter(baseUserId=baseUserId).first() # 更新用户福利表
+              res.left_tokens -=total_tokens
+              res.save()
+
+              def generate_streaming_text(text=chat_text):
+                  # 流媒体文本处理方法
+                  id = str(uuid.uuid4())
+                  parent_message_id = str(uuid.uuid4())
+                  conversation_id = str(uuid.uuid4())
+                  for i, char in enumerate(text):
+                      data = {
+                          "role": "null",
+                          "id": id,
+                          "parentMessageId": parent_message_id,
+                          "conversationId": conversation_id,
+                          "text": text[:i + 1],
+                      }
+                      yield f"{json.dumps(data, ensure_ascii=False)}\n"
+                      time.sleep(0.02)
+              response = StreamingHttpResponse(streaming_content=generate_streaming_text(), content_type='application/octet-stream')
+              return response
+          except BaseException as e:
+              msg="请求失败,请稍后再试"
+              logger.error(f'{msg}-后台返回-{e}')
+              return ErrorResponse(code=500, data={}, msg=msg)
+          
+        elif serializer.data['chatModel'].startswith('claude'):                  
+          # claude 处理逻辑
+          client = Anthropic(
+              api_key = openai_chat_api_3_5_config_dict.get("OPENAI_API_KEY", 'None'),
+              base_url = 'https://api.openai-proxy.org/anthropic'
+          )
+
+          message = client.messages.create(
+              max_tokens=1024,
+              messages=[
+                  {
+                      "role": "user",
+                      "content": prompt,
+                  }
+              ],
+              model= serializer.data.get('chatModel', 'None'),
+          )
+          logger.info(message.content[0].text)
+          def generate_streaming_text(text=message.content[0].text):
+                  # 流媒体文本处理方法
+                  id = str(uuid.uuid4())
+                  parent_message_id = str(uuid.uuid4())
+                  conversation_id = str(uuid.uuid4())
+                  for i, char in enumerate(text):
+                      data = {
+                          "role": "null",
+                          "id": id,
+                          "parentMessageId": parent_message_id,
+                          "conversationId": conversation_id,
+                          "text": text[:i + 1],
+                      }
+                      yield f"{json.dumps(data, ensure_ascii=False)}\n"
+                      time.sleep(0.02)
+          response = StreamingHttpResponse(streaming_content=generate_streaming_text(), content_type='application/octet-stream')
+          return response
