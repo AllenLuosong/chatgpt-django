@@ -43,7 +43,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework import permissions
 from django.shortcuts import render
 from chatgpt_config.models import Config, UserConfig
-from chatgpt_user.models import CheckIn, UserBenefits
+from chatgpt_user.models import CheckIn, UserBenefits, UserRedeem
 
 
 def send_verification_email(request, to_email, verify_code,verify_ip, expire_at, template='register_verify_email.html', verificationUrl=None):
@@ -373,9 +373,35 @@ def dashboard(request):
     context = { 'user_count': user_count, 'task_count': 0 }
     return render(request, 'dashboard.html',context)
 
-def UserUpateVIP(request):
-    username = request.data.get('username',None)
-    FrontUserBase.objects.update_or_create()
+class Redeem(CustomModelViewSet):
+  permission_classes = [permissions.IsAuthenticated]
+
+  def user_redeem_gerenate(self, request):
+      baseUserId = request.user.id
+      redeem_code = request.data.get('redeemCode', None)
+      res = UserRedeem.objects.filter(redeem_code=redeem_code, expire_at__gt=timezone.now(), verified=0).first()
+      if res:
+        res.redeem_dalle = 10
+        res.baseUserId = baseUserId
+        res.redeem_tokens = 200000
+        res.verified = 1
+        res.save()
+        user_res = FrontUserBase.objects.filter(id=baseUserId).first()
+        user_res.VIP_TYPE = 1
+        user_res.save()
+
+        benefit_res = UserBenefits.objects.filter(baseUserId=baseUserId).first()
+        benefit_res.total_benefits_tokens +=200000
+        benefit_res.total_benefits_dalle +=10
+        benefit_res.left_tokens +=200000
+        benefit_res.left_dalle +=10
+        benefit_res.benefits_source = 1
+        benefit_res.save()
+
+        return DetailResponse()
+      else:
+        return ErrorResponse(msg='兑换码无效或过期,请检查')
+
 
 class SignIn(CustomModelViewSet):
     permission_classes = [permissions.IsAuthenticated]

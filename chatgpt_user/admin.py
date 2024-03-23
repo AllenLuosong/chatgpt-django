@@ -1,7 +1,25 @@
 from django.contrib import admin
 from chatgpt_user.models import FrontUserBase, EmailVerifyCode, FrontUserExtraEmail
-from chatgpt_user.models import CheckIn, UserBenefits
+from chatgpt_user.models import CheckIn, UserBenefits, UserRedeem
 # Register your models here.
+
+class UserRedeemAdmin(admin.ModelAdmin):
+    # 定制哪些字段需要展示
+    list_display = ('baseUserId', 'redeem_code', 'redeem_tokens', 'redeem_dalle', 'verified', 'expire_at', 'create_datetime',)
+
+    '''分页：每页10条'''
+    list_per_page = 10
+
+    '''最大条目'''
+    list_max_show_all = 200 #default
+
+    '''搜索框 ^, =, @, None=icontains'''
+    search_fields = ['baseUserId']
+
+
+    '''默认空值'''
+    empty_value_display = 'NA'
+admin.site.register(UserRedeem, UserRedeemAdmin)
 
 class UserBenefitsAdmin(admin.ModelAdmin):
     # 定制哪些字段需要展示

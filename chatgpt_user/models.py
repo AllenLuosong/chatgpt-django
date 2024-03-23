@@ -3,8 +3,11 @@ from django.utils.translation import gettext_lazy as _
 import uuid
 from captcha.views import CaptchaStore
 from django.contrib.auth.models import AbstractUser
-from faker import Faker
-from loguru import logger
+import random
+import string
+from django.utils import timezone
+from django.conf import settings
+import datetime
 
 class CustomerCaptchaStore(CaptchaStore):
     pic_code_seesion_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -152,6 +155,11 @@ class UserBenefits(models.Model):
         verbose_name_plural = verbose_name
         ordering = ("-create_datetime",)
 
+def default_redeem_code():
+    return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(10))
+
+def default_expire_at():
+    return timezone.now() + datetime.timedelta(minutes=int(settings.EMAIL_TIMEOUT))
 
 class UserRedeem(models.Model):
     
@@ -159,14 +167,14 @@ class UserRedeem(models.Model):
         (0, _('未验证')),
         (1, _('已验证')),
     )
-        
+
     id = models.AutoField(primary_key=True)
+    redeem_code = models.CharField(max_length=32, default=default_redeem_code, verbose_name="兑换卡密", null=True, blank=True, help_text="兑换卡密")
     baseUserId = models.IntegerField(verbose_name="用户ID", null=True, blank=True, help_text="用户ID")
-    redeem_code = models.CharField(max_length=32, verbose_name="兑换卡密", null=True, blank=True, help_text="兑换卡密")
-    redeem_tokens = models.IntegerField(default=2000, verbose_name="兑换赠送tokens", null=True, blank=True, help_text="兑换赠送tokens")
-    redeem_dalle = models.IntegerField(default=2, verbose_name="兑换赠送dalle", null=True, blank=True, help_text="兑换赠送dall-e-2,3")
+    redeem_tokens = models.IntegerField(default=200000, verbose_name="兑换赠送tokens", null=True, blank=True, help_text="兑换赠送tokens")
+    redeem_dalle = models.IntegerField(default=10, verbose_name="兑换赠送dalle", null=True, blank=True, help_text="兑换赠送dall-e-2,3")
     verified = models.IntegerField(verbose_name="是否验证", choices=VERIFIED_STATUS_CHOICES, default=0, help_text="是否验证 0 未验证 1 已验证")
-    expire_at = models.DateTimeField(verbose_name="兑换卡密过期时间", null=True, blank=True, help_text="兑换卡密过期时间")
+    expire_at = models.DateTimeField(verbose_name="兑换卡密过期时间", default=default_expire_at, null=True, blank=True, help_text="兑换卡密过期时间")
     create_datetime = models.DateTimeField(auto_now_add=True, null=True, blank=True, help_text="签到时间", verbose_name="创建时间")
     update_datetime = models.DateTimeField(auto_now=True, null=True, blank=True, help_text="修改时间", verbose_name="修改时间")
 
@@ -175,3 +183,4 @@ class UserRedeem(models.Model):
         verbose_name = "用户卡密兑换表"
         verbose_name_plural = verbose_name
         ordering = ("-create_datetime",)
+
