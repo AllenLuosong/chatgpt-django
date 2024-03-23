@@ -44,7 +44,7 @@ from rest_framework import permissions
 from django.shortcuts import render
 from chatgpt_config.models import Config, UserConfig
 from chatgpt_user.models import CheckIn, UserBenefits, UserRedeem
-
+import json
 
 def send_verification_email(request, to_email, verify_code,verify_ip, expire_at, template='register_verify_email.html', verificationUrl=None):
     """ 邮件发送方法 
@@ -373,6 +373,10 @@ def dashboard(request):
     context = { 'user_count': user_count, 'task_count': 0 }
     return render(request, 'dashboard.html',context)
 
+def VIP_User_config_list():
+    with open ('./VIP_config.json', 'r', encoding='utf-8') as default_config:
+      return json.loads(default_config.read())
+
 class Redeem(CustomModelViewSet):
   permission_classes = [permissions.IsAuthenticated]
 
@@ -381,22 +385,29 @@ class Redeem(CustomModelViewSet):
       redeem_code = request.data.get('redeemCode', None)
       res = UserRedeem.objects.filter(redeem_code=redeem_code, expire_at__gt=timezone.now(), verified=0).first()
       if res:
-        res.redeem_dalle = 10
+        # 更新兑换表
         res.baseUserId = baseUserId
-        res.redeem_tokens = 200000
         res.verified = 1
         res.save()
+
+        # 更新用户表
         user_res = FrontUserBase.objects.filter(id=baseUserId).first()
         user_res.VIP_TYPE = 1
         user_res.save()
 
+        # 更新福利表
         benefit_res = UserBenefits.objects.filter(baseUserId=baseUserId).first()
-        benefit_res.total_benefits_tokens +=200000
-        benefit_res.total_benefits_dalle +=10
-        benefit_res.left_tokens +=200000
-        benefit_res.left_dalle +=10
+        benefit_res.total_benefits_tokens += res.redeem_tokens
+        benefit_res.total_benefits_dalle += res.redeem_dalle
+        benefit_res.left_tokens += res.redeem_tokens
+        benefit_res.left_dalle += res.redeem_dalle
         benefit_res.benefits_source = 1
         benefit_res.save()
+
+        # 更新用户配置表
+        user_config = UserConfig.objects.filter(baseUserId=baseUserId).first()
+        user_config.chatModelList = VIP_User_config_list()
+        user_config.save()
 
         return DetailResponse()
       else:
