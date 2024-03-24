@@ -25,6 +25,8 @@ from chatgpt_config.models import Config, UserConfig
 import json
 from chatgpt_user.models import UserBenefits, FrontUserBase
 from anthropic import Anthropic
+from chatgpt_chat.models import ChatMessage
+
 
 class Chat(CustomModelViewSet):
     serializer_class = ChatMessageSerializers
@@ -40,7 +42,6 @@ class Chat(CustomModelViewSet):
         openai_chat_api_3_5_config_dict = {}
         for i in openai_chat_api_3_5_config:
           openai_chat_api_3_5_config_dict.update({i.key: i.value})
-        logger.info(serializer.data)
         prompt = request.data["prompt"]
         chat_serializer = ChatMessageSerializers(data=request.data)
         if serializer.data['chatModel'].startswith('gpt'):
@@ -65,10 +66,16 @@ class Chat(CustomModelViewSet):
 
           if chat_serializer.is_valid(raise_exception=True):
             logger.info(chat_serializer.validated_data)
+            chat_list = []
+            chat_res = ChatMessage.objects.filter(baseUserId=baseUserId, chat_model__startswith='gpt').order_by('-create_datetime')[:5]
+            for i in chat_res.values():
+              if i.get('completion_message'):
+                chat_list.append({"role": "user", "content": i.get('prompt')})
+                chat_list.append(json.loads(i.get('completion_message')))
           try:
               completion = openai.ChatCompletion.create(
                   model= openai_model,
-                  messages=[
+                  messages=chat_list[::-1]+[
                       {"role": "system", "content": "You are a helpful assistant."},
                       {"role": "user", "content": prompt}
                   ],
@@ -79,7 +86,12 @@ class Chat(CustomModelViewSet):
               prompt_tokens = completion.usage.prompt_tokens
               completion_tokens = completion.usage.completion_tokens
               total_tokens = completion.usage.total_tokens
-              chat_serializer.save(prompt=prompt,baseUserId=request.user.id,completion=completion,chat_model=openai_model,
+              if openai_model in ['gpt-4', 'claude']:
+                 prompt_tokens = prompt_tokens * 2
+                 completion_tokens = completion_tokens * 2
+                 total_tokens = total_tokens * 2
+              chat_serializer.save(prompt=prompt,baseUserId=baseUserId,completion=completion,
+                                   completion_message = completion.choices[0].message, chat_model=openai_model,
                   prompt_tokens=prompt_tokens,completion_tokens=completion_tokens,total_tokens=total_tokens)
 
               res = UserBenefits.objects.filter(baseUserId=baseUserId).first() # 更新用户福利表
@@ -150,13 +162,16 @@ class Chat(CustomModelViewSet):
               model= serializer.data.get('chatModel', 'None'),
           )
           logger.info(message)
-
           prompt_tokens = message.usage.input_tokens
           completion_tokens = message.usage.output_tokens
           total_tokens = int(prompt_tokens) + int(completion_tokens)
+          if openai_model in ['gpt-4', 'claude']:
+            prompt_tokens = prompt_tokens * 2
+            completion_tokens = completion_tokens * 2
+            total_tokens = total_tokens * 2
           chat_serializer.save(prompt=prompt,baseUserId=request.user.id,completion=message,chat_model=openai_model,
               prompt_tokens=prompt_tokens,completion_tokens=completion_tokens,total_tokens=total_tokens)
-
+  
           res = UserBenefits.objects.filter(baseUserId=baseUserId).first() # 更新用户福利表
           res.left_tokens -=total_tokens
           if res.left_tokens < 0:

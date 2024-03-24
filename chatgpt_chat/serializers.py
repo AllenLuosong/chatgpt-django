@@ -20,6 +20,7 @@ class ChatMessageSerializers(serializers.ModelSerializer):
     baseUserId = serializers.IntegerField(required=False)
     prompt = serializers.CharField()
     completion = serializers.CharField(allow_blank=True, required=False)
+    completion_message = serializers.CharField(allow_blank=True, required=False)
     prompt_tokens = serializers.IntegerField(required=False)
     total_tokens = serializers.IntegerField(required=False)
     completion_tokens = serializers.IntegerField(required=False)
