@@ -43,6 +43,7 @@ class Chat(CustomModelViewSet):
         for i in openai_chat_api_3_5_config:
           openai_chat_api_3_5_config_dict.update({i.key: i.value})
         prompt = request.data["prompt"]
+        isUsingContext = request.data["isUsingContext"]
         chat_serializer = ChatMessageSerializers(data=request.data)
         if serializer.data['chatModel'].startswith('gpt'):
           # chatgpt 处理逻辑
@@ -67,11 +68,12 @@ class Chat(CustomModelViewSet):
           if chat_serializer.is_valid(raise_exception=True):
             logger.info(chat_serializer.validated_data)
             chat_list = []
-            chat_res = ChatMessage.objects.filter(baseUserId=baseUserId, chat_model__startswith='gpt').order_by('-create_datetime')[:5]
-            for i in chat_res.values():
-              if i.get('completion_message'):
-                chat_list.append({"role": "user", "content": i.get('prompt')})
-                chat_list.append(json.loads(i.get('completion_message')))
+            if isUsingContext:
+              chat_res = ChatMessage.objects.filter(baseUserId=baseUserId, chat_model__startswith='gpt').order_by('-create_datetime')[:5]
+              for i in chat_res.values():
+                if i.get('completion_message'):
+                  chat_list.append({"role": "user", "content": i.get('prompt')})
+                  chat_list.append(json.loads(i.get('completion_message')))
           try:
               completion = openai.ChatCompletion.create(
                   model= openai_model,
