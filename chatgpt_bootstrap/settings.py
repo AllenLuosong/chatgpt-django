@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'captcha',
     'rest_framework',
     'drf_yasg',
+    'django_apscheduler',
     'django_comment_migrate',
     'chatgpt_chat',
     'chatgpt_image',

@@ -14,7 +14,6 @@ from chatgpt_user.serializers import (
     RegisterDetailSerializer,
     UserInfoSerializer,
     ResetPasswordSerializer,
-    CheckInSerializer,
     EmailVerifyCodeSerializer
 )
 from utils.viewset import CustomModelViewSet
@@ -45,6 +44,33 @@ from django.shortcuts import render
 from chatgpt_config.models import Config, UserConfig
 from chatgpt_user.models import CheckIn, UserBenefits, UserRedeem
 import json
+from apscheduler.schedulers.background import BackgroundScheduler # 使用它可以使你的定时任务在后台运行
+from django_apscheduler.jobstores import DjangoJobStore, register_job
+from chatgpt_config.models import get_chatModel_list
+
+
+#开启定时工作
+try:
+    # 实例化调度器
+    scheduler = BackgroundScheduler()
+    # 调度器使用DjangoJobStore()
+    scheduler.add_jobstore(DjangoJobStore(), "default")
+    # 每天固定时间执行任务，对应代码为：
+    @register_job(scheduler, 'cron', hour='22', minute='05', second='20',id='task', replace_existing=True )
+    def my_job():
+        res = FrontUserBase.objects.filter(vip_expire_at__lt=timezone.now(), VIP_TYPE=1).values()
+        if res:
+            logger.info(f"开始重置用户{[id['id'] for id in res]}VIP状态")
+            for id in res:
+                # 更新会员状态和用户配置表
+                FrontUserBase.objects.filter(id=id['id']).update(VIP_TYPE=0, update_datetime=datetime.datetime.now())
+                UserConfig.objects.filter(baseUserId=id['id']).update(chatModelList=get_chatModel_list(),update_datetime=datetime.datetime.now())
+            logger.info("已重置vip用户状态")
+    scheduler.start()
+except Exception as e:
+    logger.error(f"定时任务异常-{e}")
+
+
 
 def send_verification_email(request, to_email, verify_code,verify_ip, expire_at, template='register_verify_email.html', verificationUrl=None):
     """ 邮件发送方法 
@@ -386,14 +412,10 @@ class Redeem(CustomModelViewSet):
       res = UserRedeem.objects.filter(redeem_code=redeem_code, expire_at__gt=timezone.now(), verified=0).first()
       if res:
         # 更新兑换表
-        res.baseUserId = baseUserId
-        res.verified = 1
-        res.save()
-
+        UserRedeem.objects.filter(redeem_code=redeem_code).update(baseUserId=baseUserId,verified=1)
         # 更新用户表
-        user_res = FrontUserBase.objects.filter(id=baseUserId).first()
-        user_res.VIP_TYPE = 1
-        user_res.save()
+        expire_at = timezone.now() + datetime.timedelta(days=30)
+        FrontUserBase.objects.filter(id=baseUserId).update(VIP_TYPE=1,vip_expire_at=expire_at)
 
         # 更新福利表
         benefit_res = UserBenefits.objects.filter(baseUserId=baseUserId).first()
@@ -405,9 +427,7 @@ class Redeem(CustomModelViewSet):
         benefit_res.save()
 
         # 更新用户配置表
-        user_config = UserConfig.objects.filter(baseUserId=baseUserId).first()
-        user_config.chatModelList = VIP_User_config_list()
-        user_config.save()
+        UserConfig.objects.filter(baseUserId=baseUserId).update(chatModelList=VIP_User_config_list())
 
         return DetailResponse()
       else:
