@@ -38,10 +38,5 @@
     "label": "claude-3-sonnet-20240229(会员可用)",
     "value": "claude-3-sonnet-20240229",
     "disabled": true
-  },
-  {
-    "label": "gpt-3.5-turbo-1106(会员可用)",
-    "value": "gpt-3.5-turbo-1106",
-    "disabled": true
   }
 ]

@@ -155,6 +155,7 @@ class UserBenefits(models.Model):
         verbose_name_plural = verbose_name
         ordering = ("-create_datetime",)
 
+
 def default_redeem_code():
     return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(10))
 
@@ -183,4 +184,4 @@ class UserRedeem(models.Model):
         verbose_name = "用户卡密兑换表"
         verbose_name_plural = verbose_name
         ordering = ("-create_datetime",)
-
+    

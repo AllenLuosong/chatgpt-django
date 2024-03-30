@@ -56,15 +56,18 @@ try:
     # 调度器使用DjangoJobStore()
     scheduler.add_jobstore(DjangoJobStore(), "default")
     # 每天固定时间执行任务，对应代码为：
-    @register_job(scheduler, 'cron', hour='22', minute='05', second='20',id='task', replace_existing=True )
+    @register_job(scheduler, 'cron', hour='1', minute='47', second='30',id='task', replace_existing=True )
     def my_job():
         res = FrontUserBase.objects.filter(vip_expire_at__lt=timezone.now(), VIP_TYPE=1).values()
         if res:
             logger.info(f"开始重置用户{[id['id'] for id in res]}VIP状态")
             for id in res:
                 # 更新会员状态和用户配置表
-                FrontUserBase.objects.filter(id=id['id']).update(VIP_TYPE=0, update_datetime=datetime.datetime.now())
-                UserConfig.objects.filter(baseUserId=id['id']).update(chatModelList=get_chatModel_list(),update_datetime=datetime.datetime.now())
+                baseUserId = id['id']
+                update_datetime = datetime.datetime.now()
+                FrontUserBase.objects.filter(id=baseUserId).update(VIP_TYPE=0, update_datetime=update_datetime)
+                UserConfig.objects.filter(baseUserId=baseUserId).update(chatModel='gpt-3.5-turbo' ,chatModelList=get_chatModel_list(),update_datetime=update_datetime)
+                UserBenefits.objects.filter(baseUserId=baseUserId).update(left_tokens=0, left_dalle=0,update_datetime=update_datetime)
             logger.info("已重置vip用户状态")
     scheduler.start()
 except Exception as e:
