@@ -5,7 +5,7 @@ from chatgpt_user.models import CheckIn, UserBenefits, UserRedeem
 
 class UserRedeemAdmin(admin.ModelAdmin):
     # 定制哪些字段需要展示
-    list_display = ('baseUserId', 'redeem_code', 'redeem_tokens', 'redeem_dalle', 'verified', 'expire_at', 'create_datetime',)
+    list_display = ('baseUserId', 'redeem_code', 'redeem_tokens', 'redeem_dalle', 'verified', 'expire_at', 'update_datetime',)
 
     '''分页：每页10条'''
     list_per_page = 10
@@ -23,7 +23,7 @@ admin.site.register(UserRedeem, UserRedeemAdmin)
 
 class UserBenefitsAdmin(admin.ModelAdmin):
     # 定制哪些字段需要展示
-    list_display = ('baseUserId', 'total_benefits_tokens', 'total_benefits_dalle', 'left_tokens', 'left_dalle', 'create_datetime',)
+    list_display = ('baseUserId', 'total_benefits_tokens', 'total_benefits_dalle', 'left_tokens', 'left_dalle', 'update_datetime',)
 
     '''分页：每页10条'''
     list_per_page = 10
@@ -43,7 +43,7 @@ admin.site.register(UserBenefits, UserBenefitsAdmin)
 
 class CheckInAdmin(admin.ModelAdmin):
     # 定制哪些字段需要展示
-    list_display = ('baseUserId', 'benefits_tokens', 'benefits_dalle', 'check_in_date', 'create_datetime',  )
+    list_display = ('baseUserId', 'benefits_tokens', 'benefits_dalle', 'check_in_date', 'update_datetime',  )
 
     '''分页：每页10条'''
     list_per_page = 10
@@ -63,7 +63,7 @@ admin.site.register(CheckIn, CheckInAdmin)
 
 class FrontUserBaseAdmin(admin.ModelAdmin):
     # 定制哪些字段需要展示
-    list_display = ('id', 'username', 'nickname','VIP_TYPE', 'last_login_ip', 'vip_expire_at', 'call_count', 'create_datetime', 'update_datetime',)
+    list_display = ('id', 'username', 'nickname','VIP_TYPE', 'last_login_ip', 'vip_expire_at', 'call_count', 'update_datetime', 'update_datetime',)
 
     '''分页：每页10条'''
     list_per_page = 10

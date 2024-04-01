@@ -54,7 +54,6 @@ class Image(CustomModelViewSet):
         """
         imagemessage = ImageMessage.objects.filter(uuid=uuid).first()
         serializer = ImageMessageSend(imagemessage)
-        logger.info(serializer.data['imageQuality'])
         baseUserId = request.user.id
         user_config = UserConfig.objects.filter(baseUserId=baseUserId)
         user_config_serializer = UserConfigserializer(user_config.first())

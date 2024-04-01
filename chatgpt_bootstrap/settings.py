@@ -39,6 +39,7 @@ ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = ['http://54.165.238.232']
 
+INTERNAL_IPS = ['127.0.0.1']
 
 # Application definition
 
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'chatgpt_user',
     'captcha',
     'rest_framework',
@@ -65,6 +67,7 @@ INSTALLED_APPS = [
 DCM_COMMENT_APP=['app']
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
