@@ -80,9 +80,9 @@ class Chat(CustomModelViewSet):
                 prompt_tokens = prompt_tokens * 20
                 completion_tokens = completion_tokens * 20
                 total_tokens = total_tokens * 20
-                chat_serializer.save(prompt=prompt,baseUserId=baseUserId,completion=completion,
-                                    completion_message = completion.choices[0].message, chat_model=openai_model,
-                    prompt_tokens=prompt_tokens,completion_tokens=completion_tokens,total_tokens=total_tokens)
+              chat_serializer.save(prompt=prompt,baseUserId=baseUserId,completion=completion,
+                                  completion_message = completion.choices[0].message, chat_model=openai_model,
+                  prompt_tokens=prompt_tokens,completion_tokens=completion_tokens,total_tokens=total_tokens)
           except BaseException as e:
               msg="请求失败,请稍后再试"
               logger.error(f'{msg}-后台返回-{e}')
