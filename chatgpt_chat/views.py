@@ -76,7 +76,7 @@ class Chat(CustomModelViewSet):
               prompt_tokens = completion.usage.prompt_tokens
               completion_tokens = completion.usage.completion_tokens
               total_tokens = completion.usage.total_tokens
-              if openai_model.startswith('gpt'):
+              if openai_model.startswith('gpt-4'):
                 prompt_tokens = prompt_tokens * 20
                 completion_tokens = completion_tokens * 20
                 total_tokens = total_tokens * 20
