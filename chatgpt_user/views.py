@@ -386,12 +386,14 @@ class UserInfoViewSet(CustomModelViewSet):
         decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
         customer_id=decoded_token["id"]
         res = FrontUserBase.objects.filter(id=customer_id).first()
+        res_user = UserConfig.objects.filter(baseUserId=customer_id).first()
         result = {
                 "baseUserId": customer_id,
                 "nickname": res.nickname,
                 "email": res.username,
                 "description": res.description,
-                "avatarUrl": res.avatar_version
+                "avatarUrl": res.avatar_version,
+                "chatModel": res_user.chatModel
         }
         return DetailResponse(data=result)
 
