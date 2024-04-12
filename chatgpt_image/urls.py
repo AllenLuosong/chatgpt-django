@@ -19,7 +19,7 @@ system_url.register(r'upload', FileViewSet)
 
 urlpatterns = [
     path("list", Image.as_view({"get": "images_list"})),
-    path("generation", Image.as_view({"post": "generate_uuid"})),
+    path("generations", Image.as_view({"post": "generate"})),
     path("edit", Image.as_view({"post": "edit"})),
     path("variation", Image.as_view({"post": "variation"})),
     path("detail/<slug:uuid>", Image.as_view({"get": "image_detail"})),

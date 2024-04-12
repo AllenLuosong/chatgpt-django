@@ -10,9 +10,10 @@ Version          : 1.0
 
 
 from django.urls import path
-from chatgpt_config.views import ConfigView
+from chatgpt_config.views import ConfigView, initialConfig
 
 urlpatterns = [
     path("list", ConfigView.as_view({"get": "list"})),
     path("edit", ConfigView.as_view({"post": "edit"})),
+    path("session", initialConfig.as_view({"get": "session"})),
 ]

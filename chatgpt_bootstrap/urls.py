@@ -38,10 +38,11 @@ schema_view = get_schema_view(
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("user/", include("chatgpt_user.urls")),
-    path("chat_message/", include("chatgpt_chat.urls")),
+    path("openapi/v1/chat/", include("chatgpt_chat.urls")),
+    path("openapi/v1/audio/", include("chatgpt_audio.urls")),
     path("config/", include("chatgpt_config.urls")),
     path("dashboard/", include("chatgpt_usage.urls")),
-    path("ai-image/", include("chatgpt_image.urls")),
+    path("openapi/v1/images/", include("chatgpt_image.urls")),
     path("file/", include("chatgpt_image.urls")),
 
 ]+ static(settings.STATIC_URL,document_root = settings.STATIC_ROOT)

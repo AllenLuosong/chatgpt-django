@@ -15,10 +15,10 @@
     "disabled": false
   },  
   {
-    "label": "gpt-4-0125-preview",
-    "value": "gpt-4-0125-preview",
+    "label": "gpt-4-vision-preview",
+    "value": "gpt-4-vision-preview",
     "disabled": false
-  },
+  }, 
   {
     "label": "gpt-4-turbo-preview",
     "value": "gpt-4-turbo-preview",

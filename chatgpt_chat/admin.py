@@ -8,7 +8,7 @@ admin.site.index_title = 'chatgpt-django管理后台'
 
 class ChatMessageAdmin(admin.ModelAdmin):
     # 定制哪些字段需要展示
-    list_display = ('baseUserId', 'prompt', 'completion', 'prompt_tokens', 'completion_tokens', 'total_tokens', 'create_datetime',)
+    list_display = ('baseUserId', 'messages', 'completion', 'prompt_tokens', 'completion_tokens', 'total_tokens', 'create_datetime',)
 
     '''分页：每页10条'''
     list_per_page = 10

@@ -393,7 +393,8 @@ class UserInfoViewSet(CustomModelViewSet):
                 "email": res.username,
                 "description": res.description,
                 "avatarUrl": res.avatar_version,
-                "chatModel": res_user.chatModel
+                "chatModel": res_user.chatModel,
+                "chatModelList": res_user.chatModelList
         }
         return DetailResponse(data=result)
 

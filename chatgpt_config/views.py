@@ -3,8 +3,7 @@ from utils.viewset import CustomModelViewSet
 from rest_framework import permissions
 from chatgpt_config.serializers import Configserializer, ConfigEditserializer, UserConfigserializer
 from chatgpt_config.models import UserConfig
-from utils.json_response import DetailResponse, ErrorResponse
-from loguru import logger
+from utils.json_response import DetailResponse 
 
 class ConfigView(CustomModelViewSet):
   serializer_class = Configserializer
@@ -37,3 +36,28 @@ class ConfigView(CustomModelViewSet):
                         drawvalue=serializer.validated_data['drawvalue'])
       return DetailResponse()
 
+class initialConfig(CustomModelViewSet):
+
+  def session(self, request):
+    data = {
+            "disableGpt4": "",
+            "isWsrv": "",
+            "uploadImgSize": "1",
+            "theme": "light",
+            "isCloseMdPreview": 'false',
+            "uploadType": "",
+            "notify": "",
+            "baiduId": "",
+            "googleId": "",
+            "isHideServer": 'false',
+            "isUpload": 'false',
+            "auth": 'true',
+            "model": "ChatGPTAPI",
+            "amodel": "",
+            "isApiGallery": 'false',
+            "cmodels": "",
+            "isUploadR2": 'false',
+            "gptUrl": "",
+            "turnstile": ""
+          }
+    return DetailResponse(data=data, msg="Success")
