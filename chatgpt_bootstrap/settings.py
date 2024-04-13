@@ -191,22 +191,26 @@ CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge' #字母验证�
 import sqlite3
 conn = sqlite3.connect('./db.sqlite3')
 c = conn.cursor()
-cursor = c.execute("SELECT config_Code, key, value from chatgpt_config")
+try:
+  cursor = c.execute("SELECT config_Code, key, value from chatgpt_config")
+except:
+  logger.warning('没有获取到初始化配置！！！')
+  cursor = []
 email_config_dict = {}
 for row in cursor:
   if row[0]=='email_config':
     email_config_dict.update({row[1]:row[2]})
 
-EMAIL_BACKEND = email_config_dict['EMAIL_BACKEND']
-EMAIL_HOST = email_config_dict['EMAIL_HOST']
-EMAIL_PORT = email_config_dict['EMAIL_PORT']
-EMAIL_HOST_USER = email_config_dict['EMAIL_HOST_USER']
-EMAIL_HOST_PASSWORD = email_config_dict['EMAIL_HOST_PASSWORD']
+EMAIL_BACKEND = email_config_dict.get('EMAIL_BACKEND', None)
+EMAIL_HOST = email_config_dict.get('EMAIL_HOST', None)
+EMAIL_PORT = email_config_dict.get('EMAIL_PORT', None)
+EMAIL_HOST_USER = email_config_dict.get('EMAIL_HOST_USER', None)
+EMAIL_HOST_PASSWORD = email_config_dict.get('EMAIL_HOST_PASSWORD', None)
 EMAIL_TIMEOUT = 10
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = email_config_dict['DEFAULT_FROM_EMAIL']
-VERIFICATION_REDIRECT_URL = email_config_dict['VERIFICATION_REDIRECT_URL']
-EMAIL_SUBJECT = email_config_dict['EMAIL_SUBJECT']
+DEFAULT_FROM_EMAIL = email_config_dict.get('DEFAULT_FROM_EMAIL', None)
+VERIFICATION_REDIRECT_URL = email_config_dict.get('VERIFICATION_REDIRECT_URL', None)
+EMAIL_SUBJECT = email_config_dict.get('EMAIL_SUBJECT', None)
 
 # ================================================= #
 # **************** 日志配置  ******************* #

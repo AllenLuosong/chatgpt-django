@@ -17,7 +17,6 @@ from rest_framework.viewsets import ModelViewSet
 from django_restql.mixins import QueryArgumentsMixin
 from openai import OpenAI
 from loguru import logger
-import openai
 from chatgpt_config.models import Config
 
 class Audio(ModelViewSet,QueryArgumentsMixin):
