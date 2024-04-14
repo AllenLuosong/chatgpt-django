@@ -37,7 +37,7 @@ else:
 ALLOWED_HOSTS = ['*']
 
 
-CSRF_TRUSTED_ORIGINS = ['http://54.165.238.232']
+CSRF_TRUSTED_ORIGINS = ['http://34.234.78.75']
 
 INTERNAL_IPS = ['127.0.0.1']
 
