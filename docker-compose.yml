@@ -13,7 +13,7 @@ services:
     volumes:
       - /home/ubuntu/app/nginx/html/:/usr/share/nginx/html
       - /home/ubuntu/app/nginx/nginx.conf:/etc/nginx/conf.d
-      - /home/ubuntu/app/chatgpt-django/static:/home/app/chatgpt-django/static  # 映射宿主机的django的static静态资源文件
+      - /home/ubuntu/app/chatgpt-django/static:/app/chatgpt-django/static  # 映射宿主机的django的static静态资源文件
 
     networks:
       network:
@@ -31,7 +31,7 @@ services:
     environment:
       TZ: Asia/Shanghai
     volumes:
-      - /home/app/chatgpt-django:/app
+      - /home/ubuntu/app/chatgpt-django:/app
     expose:
       - "9004"
     networks:

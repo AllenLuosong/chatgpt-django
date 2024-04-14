@@ -43,6 +43,8 @@ class Chat(ModelViewSet,QueryArgumentsMixin):
         openai_chat_api_3_5_config_dict.update({i.key: i.value})
 
       logger.info(request.data)
+      if request.data['model'] == '':
+         request.data['model'] = 'gpt-3.5-turbo'
       chat_serializer = ChatMessageSerializers(data=request.data)
       if chat_serializer.is_valid(raise_exception=True):
           messages = chat_serializer.validated_data['messages']
