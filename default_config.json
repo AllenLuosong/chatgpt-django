@@ -15,15 +15,10 @@
     "disabled": false
   },  
   {
-    "label": "gpt-4-vision-preview",
-    "value": "gpt-4-vision-preview",
-    "disabled": false
-  }, 
-  {
-    "label": "gpt-4-0125-preview(会员可用)",
-    "value": "gpt-4-0125-preview",
+    "label": "gpt-4-turbo(会员可用)",
+    "value": "gpt-4-turbo",
     "disabled": true
-  },
+  }, 
   {
     "label": "gpt-4-turbo-preview(会员可用)",
     "value": "gpt-4-turbo-preview",

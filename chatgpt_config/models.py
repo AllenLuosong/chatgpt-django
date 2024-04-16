@@ -52,4 +52,3 @@ class UserConfig(models.Model):
         verbose_name = "用户配置表"
         verbose_name_plural = verbose_name
         ordering = ("-create_datetime",)
-

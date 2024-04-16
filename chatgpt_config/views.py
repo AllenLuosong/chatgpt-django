@@ -61,3 +61,15 @@ class initialConfig(CustomModelViewSet):
             "turnstile": ""
           }
     return DetailResponse(data=data, msg="Success")
+
+
+class UserCustomerKey(CustomModelViewSet):
+    """ 创建用户关联key
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def create_key(self, request, *args, **kwargs):
+        create_key_url = 'https://api.openai-proxy.org/api/v1/account/sub-account/token'
+        header = {'Content-Type': 'application/json',
+                  'Authorization': ''
+                  }

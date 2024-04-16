@@ -15,8 +15,8 @@
     "disabled": false
   },  
   {
-    "label": "gpt-4-vision-preview",
-    "value": "gpt-4-vision-preview",
+    "label": "gpt-4-turbo",
+    "value": "gpt-4-turbo",
     "disabled": false
   }, 
   {
@@ -37,11 +37,6 @@
     {
     "label": "claude-3-sonnet-20240229",
     "value": "claude-3-sonnet-20240229",
-    "disabled": false
-  },
-  {
-    "label": "gpt-3.5-turbo-1106",
-    "value": "gpt-3.5-turbo-1106",
     "disabled": false
   }
 ]

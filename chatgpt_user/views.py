@@ -47,7 +47,8 @@ import json
 from apscheduler.schedulers.background import BackgroundScheduler # 使用它可以使你的定时任务在后台运行
 from django_apscheduler.jobstores import DjangoJobStore, register_job
 from chatgpt_config.models import get_chatModel_list
-
+import os
+from chatgpt_bootstrap.settings import BASE_DIR
 
 #开启定时工作
 try:
@@ -56,7 +57,7 @@ try:
     # 调度器使用DjangoJobStore()
     scheduler.add_jobstore(DjangoJobStore(), "default")
     # 每天固定时间执行任务，对应代码为：
-    @register_job(scheduler, 'cron', hour='1', minute='47', second='30',id='task', replace_existing=True )
+    @register_job(scheduler, 'cron', hour='1', minute='56', second='40',id='task', replace_existing=True )
     def my_job():
         res = FrontUserBase.objects.filter(vip_expire_at__lt=timezone.now(), VIP_TYPE=1).values()
         if res:
@@ -69,10 +70,19 @@ try:
                 UserConfig.objects.filter(baseUserId=baseUserId).update(chatModel='gpt-3.5-turbo' ,chatModelList=get_chatModel_list(),update_datetime=update_datetime)
                 UserBenefits.objects.filter(baseUserId=baseUserId).update(left_tokens=0, left_dalle=0,update_datetime=update_datetime)
             logger.info("已重置vip用户状态")
+        
+        audio_file_path = os.path.join(BASE_DIR, 'static', 'AudioFiles')
+        # 删除音频文件
+        file_names = os.listdir(audio_file_path)
+        if file_names:
+          file_list = [os.path.join(audio_file_path, i) for i in file_names]
+          for i in file_list:
+            os.remove(i)
+          logger.info(f'{file_list}-音频文件已删除')
+
     scheduler.start()
 except Exception as e:
     logger.error(f"定时任务异常-{e}")
-
 
 
 def send_verification_email(request, to_email, verify_code,verify_ip, expire_at, template='register_verify_email.html', verificationUrl=None):
@@ -461,4 +471,8 @@ class SignIn(CustomModelViewSet):
           user_check_in_data = CheckIn.objects.filter(baseUserId=baseUserId, create_datetime__month=timezone.now().month)
           data = {"checked_in_date":[int(date.check_in_date.day) for date in user_check_in_data]} 
           return DetailResponse(data=data)
+        
+
+
+
         

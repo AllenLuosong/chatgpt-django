@@ -13,4 +13,6 @@ from chatgpt_audio.views import Audio
 
 urlpatterns = [
     path("transcriptions", Audio.as_view({"post": "create"})),
+    path("speech", Audio.as_view({"post": "speech"})),
+
 ]
