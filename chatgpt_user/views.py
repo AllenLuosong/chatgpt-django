@@ -49,6 +49,7 @@ from django_apscheduler.jobstores import DjangoJobStore, register_job
 from chatgpt_config.models import get_chatModel_list
 import os
 from chatgpt_bootstrap.settings import BASE_DIR
+from utils.request_util import get_request_ip
 
 #开启定时工作
 try:
@@ -194,7 +195,9 @@ class RegisterModelViewSet(CustomModelViewSet):
         verificationUrl = VERIFICATION_REDIRECT_URL + verify_code
         logger.debug(f'verificationUrl:{verificationUrl}')
         expire_at = timezone.now() + datetime.timedelta(minutes=int(settings.EMAIL_TIMEOUT))
-        verify_ip = request.headers.get("X-HTTP_X_FORWARDED_FOR-Ip", None) or request.META.get('REMOTE_ADDR')
+        verify_ip = get_request_ip(request)
+
+
         template = 'register_verify_email.html'
         send_verification_email(request, username, verify_code, verify_ip, expire_at, template, verificationUrl)
         return DetailResponse(data={})
@@ -295,13 +298,13 @@ class verifyEmailCodeViewSet(CustomModelViewSet):
           res.save()   
 
           # 获取最新一次注册时使用的密码及加密盐
-          password = res.password
+          password = res.passwordx
           salt = res.salt
 
           faker = Faker()
           faker.word()
           nikename = "ChatAI_" + faker.word()
-          ip = request.headers.get("X-Real-Ip", None) or request.META.get('REMOTE_ADDR')
+          ip = get_request_ip(request)
           # 邮箱注册验证通过写入用户基础信息表
           FrontUserBase.objects.create(username=username, nickname=nikename, password=password, salt=salt, last_login_ip=ip)
           baseUserId= FrontUserBase.objects.filter(username=username).first().id
@@ -334,7 +337,7 @@ class verifyResetPasswordEmailCodeViewSet(CustomModelViewSet):
               return ErrorResponse(msg="该邮箱未注册,请检查或发起注册")
           
           expire_at = timezone.now() + datetime.timedelta(minutes=int(settings.EMAIL_TIMEOUT))
-          verify_ip = request.META.get('REMOTE_ADDR')
+          verify_ip = get_request_ip(request)
           serializer.save(to_email_address=to_email_address, verify_code=verify_code, verify_ip=verify_ip, expire_at=expire_at, biz_type=11)
           template = 'reset_password_verify_email.html'
           send_verification_email(request, to_email_address, verify_code, verify_ip, expire_at, template, verificationUrl=verify_code)
@@ -384,6 +387,8 @@ class LoginViewSet(CustomModelViewSet):
             "baseUserId": baseUserId,
         }
         logger.success(f"{username}登录成功")
+        update_datetime = datetime.datetime.now()
+        FrontUserBase.objects.filter(id=baseUserId).update(last_login_ip=get_request_ip(request), update_datetime=update_datetime)
         return DetailResponse(data=result)
 
 

@@ -160,7 +160,7 @@ def default_redeem_code():
     return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(10))
 
 def default_expire_at():
-    return timezone.now() + datetime.timedelta(minutes=int(settings.EMAIL_TIMEOUT))
+    return timezone.now() + datetime.timedelta(minutes=60*12)
 
 class UserRedeem(models.Model):
     
