@@ -298,7 +298,7 @@ class verifyEmailCodeViewSet(CustomModelViewSet):
           res.save()   
 
           # 获取最新一次注册时使用的密码及加密盐
-          password = res.passwordx
+          password = res.password
           salt = res.salt
 
           faker = Faker()
