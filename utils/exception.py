@@ -29,7 +29,7 @@ def Custom_exception_handler(ex, context):
 
   elif isinstance(ex, PermissionDenied):
       code = 403
-      msg = '额度已用完,请联系管理员'
+      msg = '额度已用完,请联系管理员,或点击签到领取额度'
 
   elif isinstance(ex, APIException):
       code = 400
