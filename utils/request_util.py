@@ -14,10 +14,8 @@ def get_request_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR', '')
     if x_forwarded_for:
         ip = x_forwarded_for.split(',')[-1].strip()
-        logger.info(f'请求ip:{ip}')
         return ip
     ip = request.META.get('REMOTE_ADDR', '') or getattr(request, 'request_ip', None)
-    logger.info(f'请求ip:{ip}')
     return ip or 'unknown'
 
 

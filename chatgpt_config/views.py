@@ -2,8 +2,9 @@ from django.shortcuts import render
 from utils.viewset import CustomModelViewSet
 from rest_framework import permissions
 from chatgpt_config.serializers import Configserializer, ConfigEditserializer, UserConfigserializer
-from chatgpt_config.models import UserConfig
+from chatgpt_config.models import UserConfig, Config
 from utils.json_response import DetailResponse 
+from loguru import logger
 
 class ConfigView(CustomModelViewSet):
   serializer_class = Configserializer
@@ -39,9 +40,20 @@ class ConfigView(CustomModelViewSet):
 class initialConfig(CustomModelViewSet):
 
   def session(self, request):
+    demo_account1 = Config.objects.filter(key__contains="demo")
+    demo_account_key = [i['key'] for i in demo_account1.values('key')]
+    demo_account_value = [i['value'] for i in demo_account1.values('value')]
+    demo_account_dict = dict(zip(demo_account_key, demo_account_value))
+    if request.user.username == demo_account_dict['demo_account']:
+      isShowDemo = 'true'
+    else:
+      isShowDemo = 'false'
     data = {
             "disableGpt4": "",
             "isWsrv": "",
+            "isShowDemo": isShowDemo,
+            "demoAccount": demo_account_dict['demo_account'],
+            "demoPasswd": demo_account_dict['demo_passwd'],
             "uploadImgSize": "1",
             "theme": "light",
             "isCloseMdPreview": 'false',
@@ -63,13 +75,13 @@ class initialConfig(CustomModelViewSet):
     return DetailResponse(data=data, msg="Success")
 
 
-class UserCustomerKey(CustomModelViewSet):
-    """ 创建用户关联key
-    """
-    permission_classes = [permissions.IsAuthenticated]
+# class UserCustomerKey(CustomModelViewSet):
+#     """ 创建用户关联key
+#     """
+#     permission_classes = [permissions.IsAuthenticated]
 
-    def create_key(self, request, *args, **kwargs):
-        create_key_url = 'https://api.openai-proxy.org/api/v1/account/sub-account/token'
-        header = {'Content-Type': 'application/json',
-                  'Authorization': ''
-                  }
+#     def create_key(self, request, *args, **kwargs):
+#         create_key_url = 'https://api.openai-proxy.org/api/v1/account/sub-account/token'
+#         header = {'Content-Type': 'application/json',
+#                   'Authorization': ''
+#                   }

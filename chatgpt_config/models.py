@@ -29,9 +29,6 @@ class Config(models.Model):
         verbose_name_plural = verbose_name
         ordering = ("-create_datetime",)
 
-    # def __str__(self) -> str:
-    #     return self.id, self.config_Code
-
 def get_chatModel_list():
     with open ('./default_config.json', 'r', encoding='utf-8') as default_config:
       return json.loads(default_config.read())
