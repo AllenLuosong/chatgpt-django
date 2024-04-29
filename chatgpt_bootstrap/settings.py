@@ -37,7 +37,7 @@ else:
 ALLOWED_HOSTS = ['*']
 
 
-CSRF_TRUSTED_ORIGINS = ['http://34.234.78.75']
+CSRF_TRUSTED_ORIGINS = ['http://34.234.78.75', 'http://admin.old-eight.top']
 
 INTERNAL_IPS = ['127.0.0.1']
 
