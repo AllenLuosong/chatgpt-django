@@ -7,12 +7,8 @@ Time             : 2023/08/28 09:40:20
 Author           : AllenLuo
 Version          : 1.0
 '''
-
-
-# import openai  # OpenAI Python library to make API calls
 from utils.viewset import CustomModelViewSet
 from chatgpt_image.serializers import ImageMessageSend, FileSerializer
-from django.conf import settings
 from loguru import logger
 from openai import OpenAI
 from rest_framework import permissions
@@ -23,27 +19,22 @@ from chatgpt_image.models import FileList, ImageMessage
 import os
 from chatgpt_bootstrap.settings import BASE_DIR
 import uuid
-import datetime
-from chatgpt_user.models import UserBenefits, FrontUserBase
 # from chatgpt_image.tasks import put_openai_image_to_superbed
-from chatgpt_config.models import UserConfig, Config
-from chatgpt_config.serializers import UserConfigserializer
+from chatgpt_config.models import Config
 from rest_framework.response import Response
 
 class Image(CustomModelViewSet):
     serializer_class = ImageMessageSend
     permission_classes = [permissions.IsAuthenticated, LimitedAccessPermission]
+    openai_api_config = Config.objects.filter(key__contains="OPENAI_API")
+    openai_api_config_dict = dict(openai_api_config.values_list('key', 'value'))
 
     def generate(self, request):
         """ 返回一个用于创建图片的uuid
         """
-        openai_chat_api_3_5_config = Config.objects.filter(config_Code='openai_chat_api_3_5')
-        openai_chat_api_3_5_config_dict = {}
-        for i in openai_chat_api_3_5_config:
-          openai_chat_api_3_5_config_dict.update({i.key: i.value})
         client = OpenAI(
-          api_key = openai_chat_api_3_5_config_dict.get("OPENAI_API_KEY", 'None'),
-          base_url = openai_chat_api_3_5_config_dict.get("OPENAI_API_BASE_URL", 'None')
+          api_key = self.openai_api_config_dict.get("OPENAI_API_KEY", 'None'),
+          base_url = self.openai_api_config_dict.get("OPENAI_API_BASE_URL", 'None')
         )
 
         serializer = ImageMessageSend(data=request.data)
@@ -54,44 +45,6 @@ class Image(CustomModelViewSet):
             serializer.save(number=req_data['number'], size=req_data['size'],
                             prompt=req_data['prompt'], baseUserId=request.user.id, 
                             uuid=uuid_str, imageQuality=req_data['imageQuality'])
-            # result = {
-            #     "uuid": uuid_str
-            # }
-    #         return DetailResponse(data=result)
-
-    # def image_detail(self, request, uuid):
-    #     """ 获取图片url
-    #     """
-        imagemessage = ImageMessage.objects.filter(uuid=uuid).first()
-        # serializer = ImageMessageSend(imagemessage)
-        baseUserId = request.user.id
-        user_config = UserConfig.objects.filter(baseUserId=baseUserId)
-        user_config_serializer = UserConfigserializer(user_config.first())
-        res = FrontUserBase.objects.filter(id=baseUserId).first()
-        # openai_chat_api_3_5_config = Config.objects.filter(config_Code='openai_chat_api_3_5')
-        # openai_chat_api_3_5_config_dict = {}
-        # for i in openai_chat_api_3_5_config:
-        #   openai_chat_api_3_5_config_dict.update({i.key: i.value})
-
-        # if user_config_serializer.data.get('secretKey', 'None'):
-        #   openai.api_key = user_config_serializer.data.get('secretKey', 'None')
-        #   openai.api_base = user_config_serializer.data.get('proxyAdress', 'None')
-        #   drawvalue = user_config_serializer.data.get('drawvalue', 'None')
-          
-        # elif res.VIP_TYPE == 1:
-        #   # 会员处理逻辑
-        #   openai.api_key = openai_chat_api_3_5_config_dict.get("OPENAI_API_KEY", 'None')
-        #   openai.api_base = openai_chat_api_3_5_config_dict.get("OPENAI_API_BASE_URL", 'None')
-        #   drawvalue = user_config_serializer.data.get('drawvalue', 'None')
-
-        # else:
-        #   openai_chat_api_3_5_config_dict = {}
-        #   openai_chat_api_3_5_config = Config.objects.filter(config_Code='openai_chat_api_3_5')
-        #   for i in openai_chat_api_3_5_config:
-        #     openai_chat_api_3_5_config_dict.update({i.key: i.value})
-        #   openai.api_key = openai_chat_api_3_5_config_dict.get("OPENAI_API_KEY", 'None')
-        #   openai.api_base = openai_chat_api_3_5_config_dict.get("OPENAI_API_BASE_URL", 'None')
-        #   drawvalue = 'dall-e-2'
 
         generation_response = client.images.generate(
             model=serializer.data['model'],
@@ -126,70 +79,6 @@ class Image(CustomModelViewSet):
         logger.debug(imagemessage)
         serializer = ImageMessageSend(imagemessage)
         return Response(serializer.data)
-
-    # def edit(self, request):
-    #     """修图
-    #     """
-    #     n = request.data["number"]
-    #     size = request.data["size"]
-    #     prompt = request.data["prompt"]
-    #     originalImage_path = os.path.join(
-    #         BASE_DIR, request.data["originalImage"])
-    #     maskImage_path = os.path.join(BASE_DIR, request.data["maskImage"])
-    #     logger.debug(originalImage_path)
-    #     logger.debug(maskImage_path)
-    #     try:
-    #         image_response = openai.Image.create_edit(
-    #             image=open(originalImage_path, "rb"),
-    #             mask=open(maskImage_path, "rb"),
-    #             prompt=prompt,
-    #             n=n,
-    #             size=size
-    #         )
-    #         logger.debug(image_response)
-    #         return DetailResponse(data=image_response)
-    #     except BaseException as e:
-    #         msg = "请求失败,请稍后再试,后台返回:{e}"
-    #         logger.error(f'{msg}-后台返回-{e}')
-    #         return ErrorResponse(code=500, data={}, msg=msg)
-
-    def variation(self, request):
-        """以图生图
-        """
-        n = request.data["number"]
-        size = request.data["size"]
-        originalImage_path = os.path.join(
-            BASE_DIR, request.data["originalImage"])
-        try:
-            logger.debug(originalImage_path)
-            # image_response = openai.Image.create_variation(
-            #     image=open(originalImage_path, "rb"),
-            #     n=n,
-            #     size=size
-            # )
-            image_response = {
-              "created": 1697281106,
-              "data": [
-                {
-                  "url": "https://wiki.hichat.shop/assets/avatar-dd2fb972.jpg"
-                }
-              ]
-            }
-            result = {
-            "createTime": 1697281106,
-            "imageUrlList": image_response['data'],
-            "originalImageUrl": 'http://localhost:3002/static/files/d/7/d72781743a4f07ca5534470652ad8a28.png',
-            "uuid": str(uuid.uuid4()).replace("-", ""),
-            "interactingMethod": 3
-            }
-            logger.debug(result)
-            return DetailResponse(data=result)
-
-        except BaseException as e:
-            msg = "请求失败,请稍后再试"
-            logger.error(f'{msg}-后台返回-{e}')
-            return ErrorResponse(code=500, data={}, msg=msg)
-
 
 class FileViewSet(CustomModelViewSet):
     """

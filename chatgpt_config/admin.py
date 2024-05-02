@@ -7,7 +7,7 @@ class ConfigAdmin(admin.ModelAdmin):
     list_display = ('config_Code', 'key', 'value', 'describtion',)
 
     '''分页：每页10条'''
-    list_per_page = 10
+    list_per_page = 50
 
     '''最大条目'''
     list_max_show_all = 200 #default

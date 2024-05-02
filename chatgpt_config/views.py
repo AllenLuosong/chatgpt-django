@@ -10,6 +10,7 @@ class ConfigView(CustomModelViewSet):
   serializer_class = Configserializer
   permission_classes = [permissions.IsAuthenticated]
 
+
   def list(self, request):
     baseUserId = request.user.id
     user_config = UserConfig.objects.filter(baseUserId=baseUserId).first()
@@ -39,12 +40,14 @@ class ConfigView(CustomModelViewSet):
 
 class initialConfig(CustomModelViewSet):
 
+  # 修改该配置需重启服务
+  demo_account1 = Config.objects.filter(key__contains="demo")
+  demo_account_key = [i['key'] for i in demo_account1.values('key')]
+  demo_account_value = [i['value'] for i in demo_account1.values('value')]
+  demo_account_dict = dict(zip(demo_account_key, demo_account_value))
+  
   def session(self, request):
-    demo_account1 = Config.objects.filter(key__contains="demo")
-    demo_account_key = [i['key'] for i in demo_account1.values('key')]
-    demo_account_value = [i['value'] for i in demo_account1.values('value')]
-    demo_account_dict = dict(zip(demo_account_key, demo_account_value))
-    if request.user.username == demo_account_dict['demo_account']:
+    if request.user.username == self.demo_account_dict['demo_account']:
       isShowDemo = 'true'
     else:
       isShowDemo = 'false'
@@ -52,8 +55,8 @@ class initialConfig(CustomModelViewSet):
             "disableGpt4": "",
             "isWsrv": "",
             "isShowDemo": isShowDemo,
-            "demoAccount": demo_account_dict['demo_account'],
-            "demoPasswd": demo_account_dict['demo_passwd'],
+            "demoAccount": self.demo_account_dict['demo_account'],
+            "demoPasswd": self.demo_account_dict['demo_passwd'],
             "uploadImgSize": "1",
             "theme": "light",
             "isCloseMdPreview": 'false',

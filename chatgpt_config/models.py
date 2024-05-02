@@ -8,10 +8,8 @@ class Config(models.Model):
         
     config_Code_CHOICES = (
         # 业务配置码枚举值
-        ('openai_chat_api_3_5', _('3.5会话配置项')),
-        ('openai_chat_api_4', _('4.0会话配置项')),
-        ('openai_image_api_DALL_E_2', _('Dall2绘图配置项')),
-        ('openai_image_api_DALL_E_3', _('Dall3绘图配置项')),
+        ('openai_config', _('OpenAI配置项')),
+        ('claude_config', _('Claude配置项')),
         ('email_config', _('邮箱服务器配置项')),
         ('customer_config', _('自定义配置项')),
     )
