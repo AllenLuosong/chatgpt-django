@@ -474,7 +474,7 @@ class SignIn(CustomModelViewSet):
           return DetailResponse(msg='今日已签到成功,快去使用吧')
         elif request.method == 'GET':
           user_check_in_data = CheckIn.objects.filter(baseUserId=baseUserId, create_datetime__month=timezone.now().month)
-          data = {"checked_in_date":[int(date.check_in_date.day) for date in user_check_in_data]} 
+          data = {"checked_in_date":[f"{date.check_in_date.timetuple().tm_year}-{date.check_in_date.timetuple().tm_mon}-{date.check_in_date.timetuple().tm_mday}" for date in user_check_in_data]} 
           return DetailResponse(data=data)
         
 
