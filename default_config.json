@@ -25,9 +25,9 @@
     "disabled": true
   },
   {
-    "label": "claude-3-opus-20240229",
+    "label": "claude-3-opus-20240229(会员可用)",
     "value": "claude-3-opus-20240229",
-    "disabled": false
+    "disabled": true
   },
   {
     "label": "claude-3-haiku-20240307",
@@ -35,8 +35,8 @@
     "disabled": false
   },
     {
-    "label": "claude-3-sonnet-20240229(会员可用)",
+    "label": "claude-3-sonnet-20240229",
     "value": "claude-3-sonnet-20240229",
-    "disabled": true
+    "disabled": false
   }
 ]
