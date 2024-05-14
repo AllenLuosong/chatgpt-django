@@ -54,13 +54,14 @@ class Chat(ModelViewSet, QueryArgumentsMixin):
         if request.data['model'].startswith('gpt'):
             Draw_Chat_TTS_Model = Config.objects.filter(key="Draw_Chat_TTS_Model")
             Draw_Chat_TTS_Model_dict = dict(Draw_Chat_TTS_Model.values_list('key', 'value'))
+            logger.info(Draw_Chat_TTS_Model_dict.get("Draw_Chat_TTS_Model", "gpt-4o"))
             client = OpenAI(
                 api_key=self.openai_api_config_dict.get(
                     "OPENAI_API_KEY", 'None'),
                 base_url=self.openai_api_config_dict.get(
                     "OPENAI_API_BASE_URL", 'None')
             )
-            if openai_model == Draw_Chat_TTS_Model_dict.get("Draw_Chat_TTS_Model", "gpt-4o"):
+            if openai_model == Draw_Chat_TTS_Model_dict.get("Draw_Chat_TTS_Model", "gpt-4o") and ( 'image_url' in messages[-1]['content']):
                 messages = [
                     {
                         "role": "user",
@@ -68,8 +69,8 @@ class Chat(ModelViewSet, QueryArgumentsMixin):
                             {"type": "text",
                              "text": messages[-1]['content'][0]['text']},
                             {
-                                "type": "image_url",
-                                "image_url": messages[-1]['content'][1]['image_url']['url'],
+                            "type": "image_url",
+                            "image_url": messages[-1]['content'][1]['image_url']['url'],
                             }
                         ]
                     }
