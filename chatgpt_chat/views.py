@@ -52,13 +52,15 @@ class Chat(ModelViewSet, QueryArgumentsMixin):
             openai_model = request.data['model']
 
         if request.data['model'].startswith('gpt'):
+            Draw_Chat_TTS_Model = Config.objects.filter(key="Draw_Chat_TTS_Model")
+            Draw_Chat_TTS_Model_dict = dict(Draw_Chat_TTS_Model.values_list('key', 'value'))
             client = OpenAI(
                 api_key=self.openai_api_config_dict.get(
                     "OPENAI_API_KEY", 'None'),
                 base_url=self.openai_api_config_dict.get(
                     "OPENAI_API_BASE_URL", 'None')
             )
-            if openai_model == 'gpt-4-vision-preview':
+            if openai_model == Draw_Chat_TTS_Model_dict.get("Draw_Chat_TTS_Model", "gpt-4o"):
                 messages = [
                     {
                         "role": "user",
