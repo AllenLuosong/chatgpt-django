@@ -256,7 +256,7 @@ SIMPLE_JWT = {
 # ****************SIMPLEUI配置  ******************** #
 # ================================================= #
 
-SIMPLEUI_LOGO = 'https://wiki.hichat.shop/assets/avatar-dd2fb972.jpg' 
+SIMPLEUI_LOGO = 'https://t.tutu.to/img/v8mPd' 
 SIMPLEUI_HOME_INFO = False # 隐藏右侧SimpleUI广告链接和使用分析
 SIMPLEUI_ANALYSIS = False # 隐藏右侧SimpleUI广告链接和使用分析
 # SIMPLEUI_HOME_INFO = True

@@ -54,7 +54,6 @@ class Chat(ModelViewSet, QueryArgumentsMixin):
         if request.data['model'].startswith('gpt'):
             Draw_Chat_TTS_Model = Config.objects.filter(key="Draw_Chat_TTS_Model")
             Draw_Chat_TTS_Model_dict = dict(Draw_Chat_TTS_Model.values_list('key', 'value'))
-            logger.info(Draw_Chat_TTS_Model_dict.get("Draw_Chat_TTS_Model", "gpt-4o"))
             client = OpenAI(
                 api_key=self.openai_api_config_dict.get(
                     "OPENAI_API_KEY", 'None'),

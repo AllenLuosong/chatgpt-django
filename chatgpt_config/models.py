@@ -47,3 +47,9 @@ class UserConfig(models.Model):
         verbose_name = "用户配置表"
         verbose_name_plural = verbose_name
         ordering = ("-create_datetime",)
+
+# class OpenaiModels(models.Model):
+#     id = models.AutoField(primary_key=True)
+#     model_name = models.CharField(max_length=64, default='', verbose_name="模型名称", null=True, blank=True, help_text="模型名称")
+#     model_price_prompt = models.IntegerField(verbose_name="模型提问价格", null=True, blank=True, help_text="模型提问价格(单位美元,以千tokens计算)")
+#     model_price_completion = models.IntegerField(verbose_name="模型提问价格", null=True, blank=True, help_text="模型提问价格(单位美元,以千tokens计算)")

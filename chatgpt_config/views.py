@@ -45,6 +45,7 @@ class initialConfig(CustomModelViewSet):
   demo_account_key = [i['key'] for i in demo_account1.values('key')]
   demo_account_value = [i['value'] for i in demo_account1.values('value')]
   demo_account_dict = dict(zip(demo_account_key, demo_account_value))
+  contactMeUrl = Config.objects.filter(key='contactMeUrl').first()
   
   def session(self, request):
     if request.user.username == self.demo_account_dict['demo_account']:
@@ -73,6 +74,7 @@ class initialConfig(CustomModelViewSet):
             "cmodels": "",
             "isUploadR2": 'false',
             "gptUrl": "",
+            "contactMeUrl": self.contactMeUrl.value,
             "turnstile": ""
           }
     return DetailResponse(data=data, msg="Success")
